@@ -1,0 +1,29 @@
+{
+  "name": "biblequiz-server",
+  "version": "0.1.0",
+  "description": "",
+  "main": "bq-api.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node bq-api.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheBitTwisters/BibleQuizServer.git"
+  },
+  "keywords": [
+    "bible",
+    "quiz",
+    "server"
+  ],
+  "author": "michael01angelo",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/TheBitTwisters/BibleQuizServer/issues"
+  },
+  "homepage": "https://github.com/TheBitTwisters/BibleQuizServer#readme",
+  "dependencies": {
+    "express": "^4.18.1",
+    "helmet": "^5.1.0"
+  }
+}
