@@ -17,6 +17,10 @@ app.get('/', (req, res) => {
   res.send('hello world')
 })
 
+// ROUTES
+// :: /auth
+app.use('/auth', require('./routers/auth'))
+
 // serve
 app.listen(port, () => {
   console.log(`App listening on port ${port}`)

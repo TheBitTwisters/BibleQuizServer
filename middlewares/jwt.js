@@ -13,8 +13,7 @@ const signManager = function (manager_id) {
   }
 }
 
-exports.signManager = signManager
-exports.verifyManager = (req, res, next) => {
+const verifyManager = function (req, res, next) {
   if (req.headers && req.headers.authorization && req.headers.authorization.startsWith(process.env.JWT_PREFIX)) {
     var token = req.headers.authorization.replace(process.env.JWT_PREFIX, '')
     jwt.verify(token, process.env.JWT_SECRET, function (err, decode) {
@@ -51,4 +50,9 @@ exports.verifyManager = (req, res, next) => {
       message: 'No token found'
     })
   }
+}
+
+module.exports = {
+  signManager,
+  verifyManager
 }
