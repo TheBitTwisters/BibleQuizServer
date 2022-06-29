@@ -24,6 +24,8 @@ app.get('/', (req, res) => {
 // ROUTES
 // :: /auth
 app.use('/auth', require('./routers/auth'))
+// :: /games
+app.use('/games', require('./routers/games'))
 
 // serve
 app.listen(port, () => {

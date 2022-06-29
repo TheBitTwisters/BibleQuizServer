@@ -1,5 +1,6 @@
 const bcrypt  = require('bcrypt')
 const Manager = require('../models/Manager')
+const Game    = require('../models/Game')
 const jwt     = require('../middlewares/jwt')
 
 const signinManager = (req, res) => {
@@ -28,12 +29,16 @@ const signinManager = (req, res) => {
         // get session by signing the manager_id
         var session = jwt.signManager(manager.id)
 
+        // get games
+        var games = await Game.getAll()
+
         // responding to client request with user profile success message and  access token.
         res.status(200).json({
           err: false,
           code: 200,
           message: 'Login successful',
           manager: manager.toPublicData(),
+          games: games,
           session: session
         })
       })
