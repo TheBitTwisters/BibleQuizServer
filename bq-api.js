@@ -26,6 +26,8 @@ app.get('/', (req, res) => {
 app.use('/auth', require('./routers/auth'))
 // :: /games
 app.use('/games', require('./routers/games'))
+// :: /levels
+app.use('/levels', require('./routers/levels'))
 
 // serve
 app.listen(port, () => {
