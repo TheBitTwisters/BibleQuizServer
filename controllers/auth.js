@@ -21,7 +21,7 @@ const signinManager = (req, res) => {
           return res.status(401).json({
             err: true,
             code: 401,
-            message: 'Invalid Password!'
+            message: 'Invalid pin!'
           })
         }
 
