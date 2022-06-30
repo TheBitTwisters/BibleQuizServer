@@ -4,6 +4,11 @@ const Level = class Level extends BaseModel {
   static get tableName() {
     return 'levels'
   }
+  static get sortBy() {
+    return {
+      'score': 'ASC'
+    }
+  }
 
   id    = 0  // int
   name  = "" // varchar(32)

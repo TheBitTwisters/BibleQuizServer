@@ -28,6 +28,10 @@ app.use('/auth', require('./routers/auth'))
 app.use('/games', require('./routers/games'))
 // :: /levels
 app.use('/levels', require('./routers/levels'))
+// :: /quest_types
+app.use('/quest_types', require('./routers/quest_types'))
+// :: /questions
+app.use('/questions', require('./routers/questions'))
 
 // serve
 app.listen(port, () => {

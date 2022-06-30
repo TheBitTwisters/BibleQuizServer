@@ -4,6 +4,11 @@ const QuestType = class QuestType extends BaseModel {
   static get tableName() {
     return 'quest_types'
   }
+  static get sortBy() {
+    return {
+      'choices_count': 'DESC'
+    }
+  }
 
   id            = 0  // int
   name          = "" // varchar(32)

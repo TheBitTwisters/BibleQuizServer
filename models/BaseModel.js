@@ -77,6 +77,23 @@ const BaseModel = class BaseModel {
     })
   }
 
+  static delete(whereParams) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        var q = new mysql.Delete()
+        await q.deleteFrom(this.tableName).where(whereParams).execute()
+        resolve(q.result)
+      } catch (err) {
+        console.error(err)
+        reject({
+          err: true,
+          code: 503,
+          message: 'Internal(DB) server error'
+        })
+      }
+    })
+  }
+
   constructor(param = {}) {
     this.id = param.id || 0
   }

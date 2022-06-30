@@ -6,3 +6,5 @@ exports.CustomQuery = require('./CustomQuery')
 
 exports.Insert = require('./Insert')
 exports.Update = require('./Update')
+
+exports.Delete = require('./Delete')
