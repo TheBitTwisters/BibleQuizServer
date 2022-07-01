@@ -6,6 +6,7 @@ class BaseSelect {
   fields = []
   whereKeys = []
   whereValues = []
+  groupKeys = []
   sortKeys = {}
   limitValue = -1
   offsetValue = -1
@@ -65,6 +66,10 @@ class BaseSelect {
     }
     return this
   }
+  groupBy(groupKeys) {
+    this.groupKeys = groupKeys
+    return this
+  }
   sortBy(sortKeys) {
     this.sortKeys = sortKeys
     return this
@@ -95,6 +100,13 @@ class BaseSelect {
     }
     return sql
   }
+  getSqlGroupBy() {
+    var sql = ''
+    if (this.groupKeys.length > 0) {
+      sql += " GROUP BY " + this.groupKeys.join(' , ')
+    }
+    return sql
+  }
   getSqlSortBy() {
     var sql = ''
     var sorts = []
@@ -111,6 +123,7 @@ class BaseSelect {
     sql += this.getSqlSelect()
     sql += this.getSqlFrom()
     sql += this.getSqlWhere()
+    sql += this.getSqlGroupBy()
     sql += this.getSqlSortBy()
     return sql.replace(/\s+/g,' ').trim()
   }
