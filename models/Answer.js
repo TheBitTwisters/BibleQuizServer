@@ -1,3 +1,4 @@
+const mysql = require('../util/mysql')
 const BaseModel = require('./BaseModel')
 
 const Answer = class Answer extends BaseModel {
@@ -21,7 +22,7 @@ const Answer = class Answer extends BaseModel {
     return new Promise(async (resolve, reject) => {
       try {
         var q = new mysql.Query()
-        q.select([ 'player_id', 'SUM(score) AS score' ]).from(this.tableName).groupBy('player_id').sortBy({ 'score': 'DESC' })
+        q.select([ 'player_id', 'SUM(score) AS score' ]).from(this.tableName).groupBy([ 'player_id' ]).sortBy({ 'score': 'DESC' })
         if (game_id > 0) {
           q.where({ game_id: game_id })
         }
