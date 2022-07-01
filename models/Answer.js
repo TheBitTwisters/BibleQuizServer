@@ -13,11 +13,19 @@ const Answer = class Answer extends BaseModel {
   score        = ""         // tinyint
   submitted_at = Date.now() // datetime : default now()
 
-  static getGameScores(game_id) {
+  static getAllGamesScores() {
+    return this.getGameScores(0)
+  }
+
+  static getGameScores(game_id = 0) {
     return new Promise(async (resolve, reject) => {
       try {
         var q = new mysql.Query()
-        await q.select([ 'player_id', 'SUM(score) AS score' ]).from(this.tableName).where({ game_id: game_id }).groupBy('player_id').sortBy({ 'score': 'DESC' }).execute()
+        q.select([ 'player_id', 'SUM(score) AS score' ]).from(this.tableName).groupBy('player_id').sortBy({ 'score': 'DESC' })
+        if (game_id > 0) {
+          q.where({ game_id: game_id })
+        }
+        await q.execute()
         var results = q.getList()
         var list = []
         for (var result of results) {
