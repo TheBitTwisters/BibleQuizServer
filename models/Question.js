@@ -4,6 +4,11 @@ const Question = class Question extends BaseModel {
   static get tableName() {
     return 'questions'
   }
+  static get sortBy() {
+    return {
+      'id': 'ASC'
+    }
+  }
 
   id         = 0          // int
   active     = true       // tinyint(1)

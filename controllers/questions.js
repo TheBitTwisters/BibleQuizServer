@@ -1,7 +1,5 @@
 const bcrypt    = require('bcrypt')
 const Game      = require('../models/Game')
-const Level     = require('../models/Level')
-const QuestType = require('../models/QuestType')
 const Question  = require('../models/Question')
 const Choice    = require('../models/Choice')
 const jwt       = require('../middlewares/jwt')
@@ -11,15 +9,19 @@ const getGameQuestions = (req, res) => {
     .then(game => {
       Question.search({ game_id: game.id }, {})
         .then(async (results) => {
+          var questions = [], i = 1
           for (let question of results) {
-            question.choices = await Level.search({ question_id: question.id })
+            question.row_number = i
+            question.choices = await Choice.search({ question_id: question.id })
+            questions.push(question)
+            i++
           }
           res.status(200).json({
             err: false,
             code: 200,
             message: 'Questions fetched successfully',
             game: game,
-            questions: results,
+            questions: questions,
             session: req.session
           })
         })
@@ -35,13 +37,14 @@ const saveQuestion = (req, res) => {
   }
   question.save()
     .then(result => {
-      if (result) {
+      if (question.id > 0) {
         Choice.delete({ question_id: question.id })
         for (let choice_data of req.body.question.choices) {
           const choice = new Choice(choice_data)
           choice.question_id = question.id
           choice.save()
         }
+
         res.status(200).json({
           err: false,
           code: 200,

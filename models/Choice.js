@@ -4,6 +4,11 @@ const Choice = class Choice extends BaseModel {
   static get tableName() {
     return 'choices'
   }
+  static get sortBy() {
+    return {
+      'id': 'ASC'
+    }
+  }
 
   id          = 0  // int
   question_id = 0  // int REF questions.id
