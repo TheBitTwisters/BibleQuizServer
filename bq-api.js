@@ -26,12 +26,16 @@ app.get('/', (req, res) => {
 app.use('/auth', require('./routers/auth'))
 // :: /games
 app.use('/games', require('./routers/games'))
+// :: /players
+app.use('/players', require('./routers/players'))
 // :: /levels
 app.use('/levels', require('./routers/levels'))
 // :: /quest_types
 app.use('/quest_types', require('./routers/quest_types'))
 // :: /questions
 app.use('/questions', require('./routers/questions'))
+// :: /scores
+app.use('/scores', require('./routers/scores'))
 
 // serve
 app.listen(port, () => {

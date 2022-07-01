@@ -13,6 +13,28 @@ const Answer = class Answer extends BaseModel {
   score        = ""         // tinyint
   submitted_at = Date.now() // datetime : default now()
 
+  static getGameScores(game_id) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        var q = new mysql.Query()
+        await q.select([ 'player_id', 'SUM(score) AS score' ]).from(this.tableName).where({ game_id: game_id }).groupBy('player_id').sortBy({ 'score': 'DESC' }).execute()
+        var results = q.getList()
+        var list = []
+        for (var result of results) {
+          list.push(new this(result))
+        }
+        resolve(list)
+      } catch (err) {
+        console.error(err)
+        reject({
+          err: true,
+          code: 503,
+          message: 'Internal(DB) server error'
+        })
+      }
+    })
+  }
+
   constructor(param = {}) {
     super(param)
     this.id           = param.id           || 0
