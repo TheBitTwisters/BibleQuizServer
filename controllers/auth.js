@@ -1,5 +1,6 @@
 const bcrypt  = require('bcrypt')
 const Manager = require('../models/Manager')
+const Player  = require('../models/Player')
 const Game    = require('../models/Game')
 const jwt     = require('../middlewares/jwt')
 
@@ -13,7 +14,7 @@ const signinManager = (req, res) => {
         return res.status(404).json({
           err: true,
           code: 404,
-          message: 'User Not found'
+          message: 'Manager not found'
         });
       }
       // comparing passwords
@@ -48,6 +49,39 @@ const signinManager = (req, res) => {
     })
 }
 
+const signinPlayer = (req, res) => {
+  var params = {
+    name: req.body.name
+  }
+  Player.get(params)
+    .then(player => {
+      if (!player) {
+        return res.status(404).json({
+          err: true,
+          code: 404,
+          message: 'Player not found'
+        });
+      }
+
+      // get session by signing the manager_id
+      var session = jwt.signinPlayer(player.id)
+
+      // responding to client request with user profile success message and  access token.
+      res.status(200).json({
+        err: false,
+        code: 200,
+        message: 'Login successful',
+        player: player.toPublicData(),
+        games: games,
+        session: session
+      })
+    })
+    .catch(err => {
+      res.status(500).json(err)
+    })
+}
+
 module.exports = {
-  signinManager
+  signinManager,
+  signinPlayer
 }
