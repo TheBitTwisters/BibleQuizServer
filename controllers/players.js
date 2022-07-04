@@ -1,6 +1,7 @@
-const bcrypt = require('bcrypt')
-const Player = require('../models/Player')
-const jwt    = require('../middlewares/jwt')
+const bcrypt     = require('bcrypt')
+const Player     = require('../models/Player')
+const Attendance = require('../models/Attendance')
+const jwt        = require('../middlewares/jwt')
 
 const getAll = (req, res) => {
   Player.getAll()
@@ -16,6 +17,26 @@ const getAll = (req, res) => {
     .catch(err => {
       res.status(500).json(err)
     })
+}
+
+const getAttendance = (req, res) => {
+  Attendance.search({ game_id: req.body.game_id })
+  .then(async (results) => {
+    var players = []
+    for (let attendance of results) {
+      var player = await Player.get({ id: attendance.player_id })
+      players.push(player)
+    }
+    res.status(200).json({
+      err: false,
+      code: 200,
+      message: 'Attendance fetched successfully',
+      players: players,
+      session: req.session
+    })
+  }).catch(err => {
+    res.status(500).json(err)
+  })
 }
 
 const savePlayer = (req, res) => {
@@ -47,5 +68,6 @@ const savePlayer = (req, res) => {
 
 module.exports = {
   getAll,
+  getAttendance,
   savePlayer
 }

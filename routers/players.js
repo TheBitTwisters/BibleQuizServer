@@ -10,4 +10,7 @@ router.get('/all', jwt.verifyManager, playersCtrl.getAll)
 router.post('/save', jwt.verifyManager, playersCtrl.savePlayer)
 router.put('/:player_id', jwt.verifyManager, playersCtrl.savePlayer)
 
+// /players/attendance
+router.get('/attendance', jwt.verifyManager, playersCtrl.getAttendance)
+
 module.exports = router
