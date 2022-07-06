@@ -5,7 +5,7 @@ const Choice    = require('../models/Choice')
 const jwt       = require('../middlewares/jwt')
 
 const getGameQuestions = (req, res) => {
-  Game.get({ id: req.body.game_id })
+  Game.get({ id: req.query.game_id })
     .then(game => {
       Question.search({ game_id: game.id }, {})
         .then(async (results) => {
