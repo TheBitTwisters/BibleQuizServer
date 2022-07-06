@@ -4,6 +4,11 @@ const Player = class Player extends BaseModel {
   static get tableName() {
     return 'players'
   }
+  static get sortBy() {
+    return {
+      'fullname': 'ASC'
+    }
+  }
 
   id        = 0          // int
   active    = true       // tinyint(1)
