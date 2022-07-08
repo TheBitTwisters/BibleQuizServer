@@ -36,15 +36,14 @@ const saveQuestion = (req, res) => {
     question.id = req.params.question_id
   }
   question.save()
-    .then(result => {
+    .then(async (result) => {
       if (question.id > 0) {
         Choice.delete({ question_id: question.id })
         for (let choice_data of req.body.question.choices) {
           const choice = new Choice(choice_data)
           choice.question_id = question.id
-          choice.save()
+          await choice.save()
         }
-
         res.status(200).json({
           err: false,
           code: 200,
