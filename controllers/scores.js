@@ -19,7 +19,7 @@ const getAllGamesScores = (req, res) => {
 }
 
 const getGameScores = (req, res) => {
-  Answer.getGameScores(req.body.game_id)
+  Answer.getGameScores(req.params.game_id)
     .then(list => {
       res.status(200).json({
         err: false,
