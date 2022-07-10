@@ -20,7 +20,7 @@ const getAll = (req, res) => {
 }
 
 const getAttendance = (req, res) => {
-  Attendance.search({ game_id: req.body.game_id })
+  Attendance.search({ game_id: req.params.game_id })
   .then(async (results) => {
     var players = []
     for (let attendance of results) {

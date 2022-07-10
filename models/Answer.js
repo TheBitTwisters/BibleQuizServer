@@ -21,11 +21,37 @@ const Answer = class Answer extends BaseModel {
   static getGameScores(game_id = 0) {
     return new Promise(async (resolve, reject) => {
       try {
-        var q = new mysql.Query()
-        q.select([ 'player_id', 'SUM(score) AS score' ]).from(this.tableName).groupBy([ 'player_id' ]).sortBy({ 'score': 'DESC' })
+        var q = new mysql.CustomQuery()
+        var sql = 'SELECT P.id player_id, SUM(A.score) score FROM answers A INNER JOIN players P ON P.id = A.player_id '
         if (game_id > 0) {
-          q.where({ game_id: game_id })
+          sql += ' WHERE A.game_id = ? '
+          q.setParams({ game_id: game_id })
         }
+        sql += ' GROUP BY P.id ORDER BY score DESC, P.fullname ASC '
+        q.setSql(sql)
+        await q.execute()
+        var results = q.getList()
+        var list = []
+        for (var result of results) {
+          list.push(new this(result))
+        }
+        resolve(list)
+      } catch (err) {
+        console.error(err)
+        reject({
+          err: true,
+          code: 503,
+          message: 'Internal(DB) server error'
+        })
+      }
+    })
+  }
+
+  static getQuestionAnswers(question_id = 0) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        var q = new mysql.Query()
+        q.select('*').from(this.tableName).where({ question_id: question_id }).sortBy({ 'id': 'ASC' })
         await q.execute()
         var results = q.getList()
         var list = []

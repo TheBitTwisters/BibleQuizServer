@@ -34,6 +34,8 @@ app.use('/levels', require('./routers/levels'))
 app.use('/quest_types', require('./routers/quest_types'))
 // :: /questions
 app.use('/questions', require('./routers/questions'))
+// :: /answers
+app.use('/answers', require('./routers/answers'))
 // :: /scores
 app.use('/scores', require('./routers/scores'))
 

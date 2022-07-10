@@ -1,3 +1,4 @@
+const mysql = require('../util/mysql')
 const BaseModel = require('./BaseModel')
 
 const Game = class Game extends BaseModel {
@@ -11,6 +12,29 @@ const Game = class Game extends BaseModel {
   date                = ""         // date : default curdate()
   current_question_id = 0          // int (REF) questions.id
   created_at          = Date.now() // datetime : default now()
+
+  static getPlayGames() {
+    return new Promise(async (resolve, reject) => {
+      try {
+        var q = new mysql.CustomQuery()
+        q.setSql('SELECT G.* FROM games G INNER JOIN managers M ON M.current_game_id = G.id ')
+        await q.execute()
+        var results = q.getList()
+        var list = []
+        for (var result of results) {
+          list.push(new this(result))
+        }
+        resolve(list)
+      } catch (err) {
+        console.error(err)
+        reject({
+          err: true,
+          code: 503,
+          message: 'Internal(DB) server error'
+        })
+      }
+    })
+  }
 
   constructor(param = {}) {
     super(param)

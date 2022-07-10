@@ -64,7 +64,7 @@ const signinPlayer = (req, res) => {
       }
 
       // get session by signing the manager_id
-      var session = jwt.signinPlayer(player.id)
+      var session = jwt.signPlayer(player.id)
 
       // responding to client request with user profile success message and  access token.
       res.status(200).json({
@@ -72,7 +72,6 @@ const signinPlayer = (req, res) => {
         code: 200,
         message: 'Login successful',
         player: player.toPublicData(),
-        games: games,
         session: session
       })
     })
