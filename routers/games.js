@@ -8,7 +8,7 @@ const gamesCtrl     = require('../controllers/games')
 router.get('/',                   gamesCtrl.getAll)
 router.get('/:game_id',           gamesCtrl.getDetails)
 router.get('/:game_id/questions', gamesCtrl.getQuestions)
-router.post('/:game_id/question', gamesCtrl.setCurrentQuestion)
+router.get('/:game_id/question',  gamesCtrl.getCurrentQuestion)
 
 // POST
 

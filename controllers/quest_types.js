@@ -18,25 +18,38 @@ const getAll = (req, res) => {
     })
 }
 
-const saveQuestType = (req, res) => {
+const getDetails = (req, res) => {
+  QuestType.get({ id: req.params.type_id })
+    .then(quest_type => {
+      res.status(200).json({
+        err: false,
+        code: 200,
+        message: 'QuestType fetched successfully',
+        quest_type: quest_type,
+        session: req.session
+      })
+    })
+    .catch(err => {
+      res.status(500).json(err)
+    })
+}
+
+const createQuestType = (req, res) => {
   const quest_type = new QuestType(req.body.quest_type)
-  if (req.params.hasOwnProperty('quest_type_id')) {
-    quest_type.id = req.params.quest_type_id
-  }
   quest_type.save()
     .then(result => {
       if (result) {
         res.status(200).json({
           err: false,
           code: 200,
-          message: 'QuestType details saved successfully',
+          message: 'QuestType created successfully',
           session: req.session
         })
       } else {
         res.status(409).json({
           err: true,
           code: 409,
-          message: 'Failed to save quest_type details'
+          message: 'Failed to create quest_type'
         })
       }
     })
@@ -45,7 +58,36 @@ const saveQuestType = (req, res) => {
     })
 }
 
+const updateQuestType = (req, res) => {
+  QuestType.get({ id: req.params.type_id })
+    .then(quest_type => {
+      quest_type.updateData(req.body.quest_type)
+      quest_type.save()
+        .then(result => {
+          if (result) {
+            res.status(200).json({
+              err: false,
+              code: 200,
+              message: 'QuestType updated successfully',
+              session: req.session
+            })
+          } else {
+            res.status(409).json({
+              err: true,
+              code: 409,
+              message: 'Failed to update quest_type'
+            })
+          }
+        })
+    })
+    .catch(err => {
+      res.status(500).json(err)
+    })
+}
+
 module.exports = {
   getAll,
-  saveQuestType
+  getDetails,
+  createQuestType,
+  updateQuestType
 }

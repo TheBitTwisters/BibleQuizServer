@@ -18,6 +18,22 @@ const getAll = (req, res) => {
     })
 }
 
+const getDetails = (req, res) => {
+  Level.get({ id: req.params.level_id })
+    .then(level => {
+      res.status(200).json({
+        err: false,
+        code: 200,
+        message: 'Level details fetched successfully',
+        level: level,
+        session: req.session
+      })
+    })
+    .catch(err => {
+      res.status(500).json(err)
+    })
+}
+
 const createLevel = (req, res) => {
   const level = new Level(req.body.level)
   level.save()
@@ -71,6 +87,7 @@ const updateLevel = (req, res) => {
 
 module.exports = {
   getAll,
+  getDetails,
   createLevel,
   updateLevel
 }

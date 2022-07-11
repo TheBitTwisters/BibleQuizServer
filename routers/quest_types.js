@@ -1,13 +1,19 @@
-const express         = require('express')
-const router          = express.Router()
-const jwt             = require('../middlewares/jwt')
-const quest_typesCtrl = require('../controllers/quest_types')
+const express    = require('express')
+const router     = express.Router()
+const jwt        = require('../middlewares/jwt')
+const qtypesCtrl = require('../controllers/quest_types')
 
-// /quest_types/all
-router.get('/all', jwt.verifyManager, quest_typesCtrl.getAll)
+// GET
 
-// /quest_types/save
-router.post('/save', jwt.verifyManager, quest_typesCtrl.saveQuestType)
-router.put('/:quest_type_id', jwt.verifyManager, quest_typesCtrl.saveQuestType)
+router.get('/',         qtypesCtrl.getAll)
+router.get('/:type_id', qtypesCtrl.getDetails)
+
+// POST
+
+router.post('/', jwt.verify, jwt.verifyManager, qtypesCtrl.createQuestType)
+
+// PUT
+
+router.put('/:type_id', jwt.verify, jwt.verifyManager, qtypesCtrl.updateQuestType)
 
 module.exports = router

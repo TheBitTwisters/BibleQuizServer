@@ -30,8 +30,8 @@ app.use('/games', require('./routers/games'))
 app.use('/players', require('./routers/players'))
 // :: /levels
 app.use('/levels', require('./routers/levels'))
-// :: /quest_types
-app.use('/quest_types', require('./routers/quest_types'))
+// :: /quest-types
+app.use('/quest-types', require('./routers/quest_types'))
 // :: /questions
 app.use('/questions', require('./routers/questions'))
 // :: /scores

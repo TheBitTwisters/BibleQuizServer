@@ -45,10 +45,7 @@ const signinManager = (req, res) => {
 }
 
 const signinPlayer = (req, res) => {
-  var params = {
-    name: req.body.name
-  }
-  User.get(params)
+  User.get({ name: req.body.name })
     .then(user => {
       if (user) {
         // get session by signing the user_id
@@ -58,7 +55,7 @@ const signinPlayer = (req, res) => {
           err: false,
           code: 200,
           message: 'Login successful',
-          player: player.toPublicData(),
+          user: user.toPublicData(),
           session: session
         })
       } else {

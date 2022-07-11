@@ -5,7 +5,8 @@ const levelsCtrl = require('../controllers/levels')
 
 // GET
 
-router.get('/', levelsCtrl.getAll)
+router.get('/',          levelsCtrl.getAll)
+router.get('/:level_id', levelsCtrl.getDetails)
 
 // POST
 

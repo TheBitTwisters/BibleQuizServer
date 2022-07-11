@@ -48,6 +48,29 @@ const getQuestions = (req, res) => {
     })
 }
 
+const getCurrentQuestion = (req, res) => {
+  Game.get({ id: req.params.game_id })
+    .then(game => {
+      Question.get({ id: game.current_question_id }, {})
+        .then(async (question) => {
+          var choices = await Choice.search({ question_id: question.id })
+          question.choices = []
+          for (let choice of choices) {
+            question.choices.push(choice.toPublicData())
+          }
+          res.status(200).json({
+            err: false,
+            code: 200,
+            message: 'Game\'s current question fetched successfully',
+            question: question,
+            session: req.session
+          })
+        })
+    }).catch(err => {
+      res.status(500).json(err)
+    })
+}
+
 
 const getDetails = (req, res) => {
   Game.get({ id: req.params.game_id })
@@ -140,6 +163,7 @@ module.exports = {
   getAll,
   getDetails,
   getQuestions,
+  getCurrentQuestion,
   setCurrentQuestion,
   createGame,
   updateGame
