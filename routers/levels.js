@@ -3,11 +3,16 @@ const router     = express.Router()
 const jwt        = require('../middlewares/jwt')
 const levelsCtrl = require('../controllers/levels')
 
-// /levels/all
-router.get('/all', jwt.verifyManager, levelsCtrl.getAll)
+// GET
 
-// /levels/save
-router.post('/save', jwt.verifyManager, levelsCtrl.saveLevel)
-router.put('/:level_id', jwt.verifyManager, levelsCtrl.saveLevel)
+router.get('/', levelsCtrl.getAll)
+
+// POST
+
+router.post('/', jwt.verify, jwt.verifyManager, levelsCtrl.createLevel)
+
+// PUT
+
+router.put('/:level_id', jwt.verify, jwt.verifyManager, levelsCtrl.updateLevel)
 
 module.exports = router

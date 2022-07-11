@@ -1,60 +1,64 @@
 const bcrypt    = require('bcrypt')
 const Game      = require('../models/Game')
 const Question  = require('../models/Question')
+const Level     = require('../models/Level')
+const QuestType = require('../models/QuestType')
 const Choice    = require('../models/Choice')
 const jwt       = require('../middlewares/jwt')
 
-const getGameQuestions = (req, res) => {
-  Game.get({ id: req.query.game_id })
-    .then(game => {
-      Question.search({ game_id: game.id }, {})
-        .then(async (results) => {
-          var questions = [], i = 1
-          for (let question of results) {
-            question.row_number = i
-            question.choices = await Choice.search({ question_id: question.id })
-            questions.push(question)
-            i++
+const getDetails = (req, res) => {
+  console.log(req)
+  Question.get({ id: req.params.question_id }, {})
+    .then(async (question) => {
+      if (question) {
+        var level = await Level.get(question.level_id)
+        var quest_type = await QuestType.get(question.type_id)
+        var choices = await Choice.search({ question_id: question.id })
+        if (jwt.isManager(req)) {
+          question.choices = choices
+        } else {
+          question.choices = []
+          for (let choice of choices) {
+            question.choices.push(choice.toPublicData())
           }
-          res.status(200).json({
-            err: false,
-            code: 200,
-            message: 'Questions fetched successfully',
-            game: game,
-            questions: questions,
-            session: req.session
-          })
+        }
+        res.status(200).json({
+          err: false,
+          code: 200,
+          message: 'Question details fetched successfully',
+          question: question,
+          level: level,
+          quest_type: quest_type,
+          session: req.session
         })
+      } else {
+        res.status(404).json({
+          err: true,
+          code: 404,
+          message: 'Question not found'
+        })
+      }
     }).catch(err => {
       res.status(500).json(err)
     })
 }
 
-const saveQuestion = (req, res) => {
+const createQuestion = (req, res) => {
   const question = new Question(req.body.question)
-  if (req.params.hasOwnProperty('question_id')) {
-    question.id = req.params.question_id
-  }
   question.save()
-    .then(async (result) => {
-      if (question.id > 0) {
-        Choice.delete({ question_id: question.id })
-        for (let choice_data of req.body.question.choices) {
-          const choice = new Choice(choice_data)
-          choice.question_id = question.id
-          await choice.save()
-        }
+    .then(result => {
+      if (result) {
         res.status(200).json({
           err: false,
           code: 200,
-          message: 'Question details saved successfully',
+          message: 'Question created successfully',
           session: req.session
         })
       } else {
         res.status(409).json({
           err: true,
           code: 409,
-          message: 'Failed to save question details'
+          message: 'Failed to create question'
         })
       }
     })
@@ -63,7 +67,35 @@ const saveQuestion = (req, res) => {
     })
 }
 
+const updateQuestion = (req, res) => {
+  Question.get({ id: req.params.question_id })
+    .then(question => {
+      question.updateData(req.body.question)
+      question.save()
+        .then(result => {
+          if (result) {
+            res.status(200).json({
+              err: false,
+              code: 200,
+              message: 'Question details saved successfully',
+              session: req.session
+            })
+          } else {
+            res.status(409).json({
+              err: true,
+              code: 409,
+              message: 'Failed to save question details'
+            })
+          }
+        })
+    })
+    .catch(err => {
+      res.status(500).json(err)
+    })
+}
+
 module.exports = {
-  getGameQuestions,
-  saveQuestion
+  getDetails,
+  createQuestion,
+  updateQuestion
 }

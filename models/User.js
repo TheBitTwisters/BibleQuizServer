@@ -1,8 +1,8 @@
 const BaseModel = require('./BaseModel')
 
-const Player = class Player extends BaseModel {
+const User = class User extends BaseModel {
   static get tableName() {
-    return 'players'
+    return 'users'
   }
   static get sortBy() {
     return {
@@ -12,7 +12,9 @@ const Player = class Player extends BaseModel {
 
   id        = 0          // int
   active    = true       // tinyint(1)
+  type      = "player"   // varchar(8)
   name      = ""         // varchar(64)
+  pin       = ""         // varchar(60)
   fullname  = ""         // varchar(255)
   joined_at = Date.now() // datetime : default now()
 
@@ -20,7 +22,9 @@ const Player = class Player extends BaseModel {
     super(param)
     this.id        = param.id        || 0
     this.active    = param.active    || 1
+    this.type      = param.type      || "player"
     this.name      = param.name      || ""
+    this.pin       = param.pin       || ""
     this.fullname  = param.fullname  || ""
     this.joined_at = param.joined_at || Date.now()
   }
@@ -29,6 +33,7 @@ const Player = class Player extends BaseModel {
     return {
       id:        this.id,
       active:    this.active,
+      type:      this.type,
       name:      this.name,
       fullname:  this.fullname,
       joined_at: this.joined_at
@@ -44,4 +49,4 @@ const Player = class Player extends BaseModel {
   }
 }
 
-module.exports = Player
+module.exports = User

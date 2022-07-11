@@ -15,8 +15,10 @@ const Question = class Question extends BaseModel {
   game_id    = 0          // int REF games.id
   level_id   = 0          // int REF levels.id
   type_id    = 0          // int REF quest_types.id
+  order      = 0          // tinyint
   question   = ""         // text
   reference  = ""         // varchar(255)
+  layout     = ""         // varchar(8)
   score      = ""         // tinyint
   created_at = Date.now() // datetime : default now()
 
@@ -27,8 +29,10 @@ const Question = class Question extends BaseModel {
     this.game_id    = param.game_id    || 1
     this.level_id   = param.level_id   || 1
     this.type_id    = param.type_id    || 1
+    this.order      = param.order      || 0
     this.question   = param.question   || ""
     this.reference  = param.reference  || ""
+    this.layout     = param.layout     || ""
     this.score      = param.score      || 0
     this.created_at = param.created_at || Date.now()
   }
@@ -40,8 +44,10 @@ const Question = class Question extends BaseModel {
       game_id:    this.game_id,
       level_id:   this.level_id,
       type_id:    this.type_id,
+      order:      this.order,
       question:   this.question,
       reference:  this.reference,
+      layout:     this.layout,
       score:      this.score,
       created_at: this.created_at
     }
@@ -53,8 +59,10 @@ const Question = class Question extends BaseModel {
       game_id:   this.game_id,
       level_id:  this.level_id,
       type_id:   this.type_id,
+      order:     this.order,
       question:  this.question,
       reference: this.reference,
+      layout:    this.layout,
       score:     this.score
     }
   }

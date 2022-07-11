@@ -22,42 +22,41 @@ const getAll = (req, res) => {
     })
 }
 
-const getPlayGames = (req, res) => {
-  Game.getPlayGames()
-    .then(list => {
-      res.status(200).json({
-        err: false,
-        code: 200,
-        message: 'Play Games fetched successfully',
-        games: list,
-        session: req.session
-      })
-    })
-    .catch(err => {
-      res.status(500).json(err)
-    })
-}
-
-const getPlayGame = (req, res) => {
-  Game.get({ id: req.params.game_id })
-    .then(async (game) => {
-
-      var levels = await Level.getAll()
-      var quest_types = await QuestType.getAll()
-
-      var question = await Question.get({ id: game.current_question_id })
-      if (question) {
-        question.choices = await Choice.search({ question_id: question.id })
+const getQuestions = (req, res) => {
+  Question.search({ game_id: req.params.game_id }, {})
+    .then(async (questions) => {
+      for (let question of questions) {
+        var choices = await Choice.search({ question_id: question.id })
+        if (jwt.isManager(req)) {
+          question.choices = choices
+        } else {
+          question.choices = []
+          for (let choice of choices) {
+            question.choices.push(choice.toPublicData())
+          }
+        }
       }
-
       res.status(200).json({
         err: false,
         code: 200,
-        message: 'Play Game fetched successfully',
+        message: 'Questions fetched successfully',
+        questions: questions,
+        session: req.session
+      })
+    }).catch(err => {
+      res.status(500).json(err)
+    })
+}
+
+
+const getDetails = (req, res) => {
+  Game.get({ id: req.params.game_id })
+    .then(game => {
+      res.status(200).json({
+        err: false,
+        code: 200,
+        message: 'Game details fetched successfully',
         game: game,
-        levels: levels,
-        quest_types: quest_types,
-        question: question,
         session: req.session
       })
     })
@@ -66,8 +65,8 @@ const getPlayGame = (req, res) => {
     })
 }
 
-const setGameQuestion = (req, res) => {
-  Game.get({ id: req.body.game_id })
+const setCurrentQuestion = (req, res) => {
+  Game.get({ id: req.params.game_id })
     .then(game => {
       game.current_question_id = req.body.question_id
       game.save()
@@ -75,7 +74,7 @@ const setGameQuestion = (req, res) => {
           res.status(200).json({
             err: false,
             code: 200,
-            message: 'Game current question changed successfully',
+            message: 'Current Game\'s question changed successfully',
             game: game,
             session: req.session
           })
@@ -86,25 +85,22 @@ const setGameQuestion = (req, res) => {
     })
 }
 
-const saveGame = (req, res) => {
+const createGame = (req, res) => {
   const game = new Game(req.body.game)
-  if (req.params.hasOwnProperty('game_id')) {
-    game.id = req.params.game_id
-  }
   game.save()
     .then(result => {
       if (result) {
         res.status(200).json({
           err: false,
           code: 200,
-          message: 'Game details saved successfully',
+          message: 'Game created successfully',
           session: req.session
         })
       } else {
         res.status(409).json({
           err: true,
           code: 409,
-          message: 'Failed to save game details'
+          message: 'Failed to create game'
         })
       }
     })
@@ -113,10 +109,38 @@ const saveGame = (req, res) => {
     })
 }
 
+const updateGame = (req, res) => {
+  Game.get({ id: req.params.geme_id })
+    .then(game => {
+      game.updateData(req.body.game)
+      game.save()
+        .then(result => {
+          if (result) {
+            res.status(200).json({
+              err: false,
+              code: 200,
+              message: 'Game updated successfully',
+              session: req.session
+            })
+          } else {
+            res.status(409).json({
+              err: true,
+              code: 409,
+              message: 'Failed to update game'
+            })
+          }
+        })
+    })
+    .catch(err => {
+      res.status(500).json(err)
+    })
+}
+
 module.exports = {
   getAll,
-  getPlayGames,
-  getPlayGame,
-  setGameQuestion,
-  saveGame
+  getDetails,
+  getQuestions,
+  setCurrentQuestion,
+  createGame,
+  updateGame
 }

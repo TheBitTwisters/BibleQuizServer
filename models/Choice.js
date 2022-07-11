@@ -27,8 +27,7 @@ const Choice = class Choice extends BaseModel {
     return {
       id:          this.id,
       question_id: this.question_id,
-      value:       this.value,
-      is_answer:   this.is_answer
+      value:       this.value
     }
   }
 

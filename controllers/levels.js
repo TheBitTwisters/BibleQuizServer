@@ -18,25 +18,22 @@ const getAll = (req, res) => {
     })
 }
 
-const saveLevel = (req, res) => {
+const createLevel = (req, res) => {
   const level = new Level(req.body.level)
-  if (req.params.hasOwnProperty('level_id')) {
-    level.id = req.params.level_id
-  }
   level.save()
     .then(result => {
       if (result) {
         res.status(200).json({
           err: false,
           code: 200,
-          message: 'Level details saved successfully',
+          message: 'Level created successfully',
           session: req.session
         })
       } else {
         res.status(409).json({
           err: true,
           code: 409,
-          message: 'Failed to save level details'
+          message: 'Failed to create level'
         })
       }
     })
@@ -45,7 +42,35 @@ const saveLevel = (req, res) => {
     })
 }
 
+const updateLevel = (req, res) => {
+  Level.get({ id: req.params.level_id })
+    .then(level => {
+      level.updateData(req.body.level)
+      level.save()
+        .then(result => {
+          if (result) {
+            res.status(200).json({
+              err: false,
+              code: 200,
+              message: 'Level created successfully',
+              session: req.session
+            })
+          } else {
+            res.status(409).json({
+              err: true,
+              code: 409,
+              message: 'Failed to create level'
+            })
+          }
+        })
+    })
+    .catch(err => {
+      res.status(500).json(err)
+    })
+}
+
 module.exports = {
   getAll,
-  saveLevel
+  createLevel,
+  updateLevel
 }

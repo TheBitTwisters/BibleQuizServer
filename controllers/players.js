@@ -1,10 +1,10 @@
 const bcrypt     = require('bcrypt')
-const Player     = require('../models/Player')
+const User       = require('../models/User')
 const Attendance = require('../models/Attendance')
 const jwt        = require('../middlewares/jwt')
 
 const getAll = (req, res) => {
-  Player.getAll()
+  User.search({ type: 'player' }, {})
     .then(list => {
       res.status(200).json({
         err: false,

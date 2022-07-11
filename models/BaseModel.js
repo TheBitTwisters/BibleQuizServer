@@ -98,6 +98,12 @@ const BaseModel = class BaseModel {
     this.id = param.id || 0
   }
 
+  updateData(params) {
+    for (let key in params) {
+      this[key] = params[key]
+    }
+  }
+
   save() {
     return new Promise(async (resolve, reject) => {
       try {

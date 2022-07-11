@@ -3,11 +3,17 @@ const router        = express.Router()
 const jwt           = require('../middlewares/jwt')
 const questionsCtrl = require('../controllers/questions')
 
-// /questions/all
-router.get('/all', jwt.verifyManager, questionsCtrl.getGameQuestions)
+// GET
 
-// /questions/save
-router.post('/save', jwt.verifyManager, questionsCtrl.saveQuestion)
-router.put('/:question_id', jwt.verifyManager, questionsCtrl.saveQuestion)
+router.get('/:question_id', questionsCtrl.getDetails)
+
+// POST
+
+router.post('/:question_id', jwt.verify, jwt.verifyManager, questionsCtrl.getDetails)
+router.post('/',             jwt.verify, jwt.verifyManager, questionsCtrl.createQuestion)
+
+// PUT
+
+router.put('/:question_id', jwt.verify, jwt.verifyManager, questionsCtrl.updateQuestion)
 
 module.exports = router
