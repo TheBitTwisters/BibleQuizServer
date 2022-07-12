@@ -5,15 +5,17 @@ const questionsCtrl = require('../controllers/questions')
 
 // GET
 
-router.get('/:question_id', questionsCtrl.getDetails)
+router.get('/:question_id',         jwt.check,                                questionsCtrl.getDetails)
+router.get('/:question_id/answer',  jwt.check, jwt.verify, jwt.verifyManager, questionsCtrl.getAnswer)
+router.get('/:question_id/answers', jwt.check, jwt.verify, jwt.verifyManager, questionsCtrl.getSubmittedAnswers)
 
 // POST
 
-router.post('/:question_id', jwt.verify, jwt.verifyManager, questionsCtrl.getDetails)
-router.post('/',             jwt.verify, jwt.verifyManager, questionsCtrl.createQuestion)
+router.post('/',                    jwt.check, jwt.verify, jwt.verifyManager, questionsCtrl.createQuestion)
+router.post('/:question_id/answer', jwt.check,                                questionsCtrl.submitAnswer)
 
 // PUT
 
-router.put('/:question_id', jwt.verify, jwt.verifyManager, questionsCtrl.updateQuestion)
+router.put('/:question_id', jwt.check, jwt.verify, jwt.verifyManager, questionsCtrl.updateQuestion)
 
 module.exports = router

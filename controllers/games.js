@@ -1,10 +1,13 @@
-const bcrypt    = require('bcrypt')
-const Game      = require('../models/Game')
-const Level     = require('../models/Level')
-const QuestType = require('../models/QuestType')
-const Question  = require('../models/Question')
-const Choice    = require('../models/Choice')
-const jwt       = require('../middlewares/jwt')
+const bcrypt     = require('bcrypt')
+const Game       = require('../models/Game')
+const Level      = require('../models/Level')
+const QuestType  = require('../models/QuestType')
+const Question   = require('../models/Question')
+const Choice     = require('../models/Choice')
+const Answer     = require('../models/Answer')
+const Attendance = require('../models/Attendance')
+const User       = require('../models/User')
+const jwt        = require('../middlewares/jwt')
 
 const getAll = (req, res) => {
   Game.getAll()
@@ -75,11 +78,55 @@ const getCurrentQuestion = (req, res) => {
 const getDetails = (req, res) => {
   Game.get({ id: req.params.game_id })
     .then(game => {
+      if (game) {
+        res.status(200).json({
+          err: false,
+          code: 200,
+          message: 'Game details fetched successfully',
+          game: game,
+          session: req.session
+        })
+      } else {
+        res.status(404).json({
+          err: true,
+          code: 404,
+          message: 'Game not found'
+        })
+      }
+    })
+    .catch(err => {
+      res.status(500).json(err)
+    })
+}
+
+const getPlayers = (req, res) => {
+  Attendance.search({ game_id: req.params.game_id })
+    .then(async (results) => {
+      var players = []
+      for (let attendance of results) {
+        var player = await User.get({ id: attendance.user_id })
+        players.push(player.toPublicData())
+      }
       res.status(200).json({
         err: false,
         code: 200,
-        message: 'Game details fetched successfully',
-        game: game,
+        message: 'Attendance fetched successfully',
+        players: players,
+        session: req.session
+      })
+    }).catch(err => {
+      res.status(500).json(err)
+    })
+}
+
+const getScores = (req, res) => {
+  Answer.getGameScores(req.params.game_id)
+    .then(list => {
+      res.status(200).json({
+        err: false,
+        code: 200,
+        message: 'Game scores fetched successfully',
+        scores: list,
         session: req.session
       })
     })
@@ -162,6 +209,8 @@ const updateGame = (req, res) => {
 module.exports = {
   getAll,
   getDetails,
+  getPlayers,
+  getScores,
   getQuestions,
   getCurrentQuestion,
   setCurrentQuestion,

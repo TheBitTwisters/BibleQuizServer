@@ -4,10 +4,10 @@ const Question  = require('../models/Question')
 const Level     = require('../models/Level')
 const QuestType = require('../models/QuestType')
 const Choice    = require('../models/Choice')
+const Answer    = require('../models/Answer')
 const jwt       = require('../middlewares/jwt')
 
 const getDetails = (req, res) => {
-  console.log(req)
   Question.get({ id: req.params.question_id }, {})
     .then(async (question) => {
       if (question) {
@@ -38,6 +38,72 @@ const getDetails = (req, res) => {
           message: 'Question not found'
         })
       }
+    }).catch(err => {
+      res.status(500).json(err)
+    })
+}
+
+const getAnswer = (req, res) => {
+  Question.get({ id: req.params.question_id }, {})
+    .then(async (question) => {
+      var choices = await Choice.search({ question_id: question.id })
+      var answer = null
+      var answerChoice = null
+      for (let choice of choices) {
+        if (choice.is_answer == 1) {
+          answer = `${choice.label}${choice.label ? '.':''} ${choice.value}`
+          answerChoice = choice
+        }
+      }
+      res.status(200).json({
+        err: false,
+        code: 200,
+        message: 'Question answer fetched successfully',
+        answer: answer,
+        choice: answerChoice,
+        session: req.session
+      })
+    }).catch(err => {
+      res.status(500).json(err)
+    })
+}
+
+const submitAnswer = (req, res) => {
+  Question.get({ id: req.params.question_id }, {})
+    .then(question => {
+      Answer.submit({
+        game_id:     question.game_id,
+        question_id: question.id,
+        user_id:     req.user.id,
+        answer:      req.body.answer
+      })
+        .then(answer => {
+          res.status(200).json({
+            err: false,
+            code: 200,
+            message: 'Question answer submitted successfully',
+            answer: answer,
+            session: req.session
+          })
+        })
+    }).catch(err => {
+      res.status(500).json(err)
+    })
+}
+
+const getSubmittedAnswers = (req, res) => {
+  Question.get({ id: req.params.question_id }, {})
+    .then(async (question) => {
+      Answer.getQuestionAnswers(question.id)
+        .then(list => {
+          res.status(200).json({
+            err: false,
+            code: 200,
+            message: 'Question answers fetched successfully',
+            answers: list,
+            session: req.session
+          })
+        })
     }).catch(err => {
       res.status(500).json(err)
     })
@@ -96,6 +162,9 @@ const updateQuestion = (req, res) => {
 
 module.exports = {
   getDetails,
+  getAnswer,
+  submitAnswer,
+  getSubmittedAnswers,
   createQuestion,
   updateQuestion
 }

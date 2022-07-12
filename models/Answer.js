@@ -1,4 +1,5 @@
-const mysql = require('../util/mysql')
+const moment    = require('moment')
+const mysql     = require('../util/mysql')
 const BaseModel = require('./BaseModel')
 
 const Answer = class Answer extends BaseModel {
@@ -9,7 +10,7 @@ const Answer = class Answer extends BaseModel {
   id           = 0          // int
   game_id      = 0          // int REF games.id
   question_id  = 0          // int REF questions.id
-  player_id    = 0          // int REF players.id
+  user_id      = 0          // int REF users.id
   answer       = ""         // text
   score        = ""         // tinyint
   submitted_at = Date.now() // datetime : default now()
@@ -22,18 +23,18 @@ const Answer = class Answer extends BaseModel {
     return new Promise(async (resolve, reject) => {
       try {
         var q = new mysql.CustomQuery()
-        var sql = 'SELECT P.id player_id, SUM(A.score) score FROM answers A INNER JOIN players P ON P.id = A.player_id '
+        var sql = 'SELECT A.game_id, U.id user_id, SUM(A.score) score FROM answers A INNER JOIN users U ON U.id = A.user_id '
         if (game_id > 0) {
           sql += ' WHERE A.game_id = ? '
           q.setParams({ game_id: game_id })
         }
-        sql += ' GROUP BY P.id ORDER BY score DESC, P.fullname ASC '
+        sql += ' GROUP BY U.id ORDER BY score DESC, U.fullname ASC '
         q.setSql(sql)
         await q.execute()
         var results = q.getList()
         var list = []
         for (var result of results) {
-          list.push(new this(result))
+          list.push(result)
         }
         resolve(list)
       } catch (err) {
@@ -47,7 +48,7 @@ const Answer = class Answer extends BaseModel {
     })
   }
 
-  static getQuestionAnswers(question_id = 0) {
+  static getQuestionAnswers(question_id) {
     return new Promise(async (resolve, reject) => {
       try {
         var q = new mysql.Query()
@@ -70,12 +71,40 @@ const Answer = class Answer extends BaseModel {
     })
   }
 
+  static submit(params) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        this.search({
+          question_id: params.question_id,
+          user_id:     params.user_id
+        }, {}).then(async (list) => {
+          var answer = new this(params)
+          answer.submitted_at = moment().utc().format('YYYY-MM-DD HH:mm:ss')
+          if (list.length > 0) {
+            answer = list[0]
+            answer.answer = params.answer
+            answer.submitted_at = moment().utc().format('YYYY-MM-DD HH:mm:ss')
+          }
+          await answer.save()
+          resolve(answer)
+        })
+      } catch (err) {
+        console.error(err)
+        reject({
+          err: true,
+          code: 503,
+          message: 'Internal(DB) server error'
+        })
+      }
+    })
+  }
+
   constructor(param = {}) {
     super(param)
     this.id           = param.id           || 0
     this.game_id      = param.game_id      || 1
     this.question_id  = param.question_id  || 1
-    this.player_id    = param.player_id    || 1
+    this.user_id      = param.user_id      || 1
     this.answer       = param.answer       || ""
     this.score        = param.score        || 0
     this.submitted_at = param.submitted_at || Date.now()
@@ -86,7 +115,7 @@ const Answer = class Answer extends BaseModel {
       id:           this.id,
       game_id:      this.game_id,
       question_id:  this.question_id,
-      player_id:    this.player_id,
+      user_id:      this.user_id,
       answer:       this.answer,
       score:        this.score,
       submitted_at: this.submitted_at
@@ -95,11 +124,12 @@ const Answer = class Answer extends BaseModel {
 
   toJsonData() {
     return {
-      game_id:     this.game_id,
-      question_id: this.question_id,
-      player_id:   this.player_id,
-      answer:      this.answer,
-      score:       this.score
+      game_id:      this.game_id,
+      question_id:  this.question_id,
+      user_id:      this.user_id,
+      answer:       this.answer,
+      score:        this.score,
+      submitted_at: this.submitted_at
     }
   }
 }

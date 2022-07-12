@@ -5,18 +5,20 @@ const gamesCtrl     = require('../controllers/games')
 
 // GET
 
-router.get('/',                   gamesCtrl.getAll)
-router.get('/:game_id',           gamesCtrl.getDetails)
-router.get('/:game_id/questions', gamesCtrl.getQuestions)
-router.get('/:game_id/question',  gamesCtrl.getCurrentQuestion)
+router.get('/',                   jwt.check, gamesCtrl.getAll)
+router.get('/:game_id',           jwt.check, gamesCtrl.getDetails)
+router.get('/:game_id/questions', jwt.check, gamesCtrl.getQuestions)
+router.get('/:game_id/question',  jwt.check, gamesCtrl.getCurrentQuestion)
+router.get('/:game_id/players',   jwt.check, gamesCtrl.getPlayers)
+router.get('/:game_id/scores',    jwt.check, gamesCtrl.getScores)
 
 // POST
 
-router.post('/',                  jwt.verify, jwt.verifyManager, gamesCtrl.createGame)
-router.post('/:game_id/question', jwt.verify, jwt.verifyManager, gamesCtrl.setCurrentQuestion)
+router.post('/',                  jwt.check, jwt.verify, jwt.verifyManager, gamesCtrl.createGame)
+router.post('/:game_id/question', jwt.check, jwt.verify, jwt.verifyManager, gamesCtrl.setCurrentQuestion)
 
 // PUT
 
-router.put('/:game_id', jwt.verify, jwt.verifyManager, gamesCtrl.updateGame)
+router.put('/:game_id', jwt.check, jwt.verify, jwt.verifyManager, gamesCtrl.updateGame)
 
 module.exports = router

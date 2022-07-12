@@ -5,15 +5,15 @@ const levelsCtrl = require('../controllers/levels')
 
 // GET
 
-router.get('/',          levelsCtrl.getAll)
-router.get('/:level_id', levelsCtrl.getDetails)
+router.get('/',          jwt.check, levelsCtrl.getAll)
+router.get('/:level_id', jwt.check, levelsCtrl.getDetails)
 
 // POST
 
-router.post('/', jwt.verify, jwt.verifyManager, levelsCtrl.createLevel)
+router.post('/', jwt.check, jwt.verify, jwt.verifyManager, levelsCtrl.createLevel)
 
 // PUT
 
-router.put('/:level_id', jwt.verify, jwt.verifyManager, levelsCtrl.updateLevel)
+router.put('/:level_id', jwt.check, jwt.verify, jwt.verifyManager, levelsCtrl.updateLevel)
 
 module.exports = router

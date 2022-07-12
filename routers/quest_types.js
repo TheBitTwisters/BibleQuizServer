@@ -5,15 +5,15 @@ const qtypesCtrl = require('../controllers/quest_types')
 
 // GET
 
-router.get('/',         qtypesCtrl.getAll)
-router.get('/:type_id', qtypesCtrl.getDetails)
+router.get('/',         jwt.check, qtypesCtrl.getAll)
+router.get('/:type_id', jwt.check, qtypesCtrl.getDetails)
 
 // POST
 
-router.post('/', jwt.verify, jwt.verifyManager, qtypesCtrl.createQuestType)
+router.post('/', jwt.check, jwt.verify, jwt.verifyManager, qtypesCtrl.createQuestType)
 
 // PUT
 
-router.put('/:type_id', jwt.verify, jwt.verifyManager, qtypesCtrl.updateQuestType)
+router.put('/:type_id', jwt.check, jwt.verify, jwt.verifyManager, qtypesCtrl.updateQuestType)
 
 module.exports = router

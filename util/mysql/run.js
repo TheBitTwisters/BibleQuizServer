@@ -20,6 +20,8 @@ const run = async (sql, params) => {
     conn = await mysql.createPool(my_config)
     const [rows, fields] = await conn.query(sql, params)
     result = rows
+  } catch (err) {
+    console.error(err)
   } finally {
     if (conn != null) conn.end()
     return result

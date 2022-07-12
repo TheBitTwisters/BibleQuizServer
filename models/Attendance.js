@@ -5,29 +5,29 @@ const Attendance = class Attendance extends BaseModel {
     return 'attendances'
   }
 
-  id        = 0 // int
-  game_id   = 0 // int REF games.id
-  player_id = 0 // int REF players.id
+  id      = 0 // int
+  game_id = 0 // int REF games.id
+  user_id = 0 // int REF players.id
 
   constructor(param = {}) {
     super(param)
-    this.id        = param.id        || 0
-    this.game_id   = param.game_id   || 0
-    this.player_id = param.player_id || 0
+    this.id      = param.id      || 0
+    this.game_id = param.game_id || 0
+    this.user_id = param.user_id || 0
   }
 
   toPublicData() {
     return {
-      id:        this.id,
-      game_id:   this.game_id,
-      player_id: this.player_id
+      id:      this.id,
+      game_id: this.game_id,
+      user_id: this.user_id
     }
   }
 
   toJsonData() {
     return {
-      game_id:   this.game_id,
-      player_id: this.player_id
+      game_id: this.game_id,
+      user_id: this.user_id
     }
   }
 }

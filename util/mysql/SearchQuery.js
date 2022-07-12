@@ -36,7 +36,7 @@ class SearchQuery extends BaseSelect {
       for (var like of this.likeKeys) {
         ws.push(like + " LIKE CONCAT('%', ?,  '%')")
       }
-      sql += "WHERE " + ws.join(' OR ')
+      sql += "WHERE " + ws.join(' AND ')
     }
     return sql
   }

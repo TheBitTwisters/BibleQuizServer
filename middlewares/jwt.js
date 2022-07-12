@@ -13,43 +13,31 @@ const sign = function (user_id) {
   }
 }
 
-const verify = function (req, res, next) {
-  if (req.headers && req.headers.authorization && req.headers.authorization.startsWith(process.env.JWT_PREFIX)) {
+const check = async function (req, res, next) {
+  try {
     var token = req.headers.authorization.replace(process.env.JWT_PREFIX, '')
-    jwt.verify(token, process.env.JWT_SECRET, function (err, decode) {
-      if (err) {
-        res.status(403).json({
-          err: true,
-          code: 403,
-          message: 'Invalid token'
-        })
-      }
-      else {
-        User.get({ id: decode.user_id })
-          .then(async (user) => {
-            if (user) {
-              // set req vars
-              req.user = user
-              req.session = sign(user.id)
-              next()
-            } else {
-              res.status(403).json({
-                err: true,
-                code: 403,
-                message: 'Invalid token'
-              })
-            }
-          })
-          .catch(err => {
-            res.status(500).json(err)
-          })
-      }
-    })
+    var decoded = jwt.verify(token, process.env.JWT_SECRET)
+    await User.get({ id: decoded.user_id })
+      .then(user => {
+        if (user) {
+          req.user = user
+          req.session = sign(user.id)
+        }
+      })
+  } catch (err) {
+    console.log('JWT verification error')
+  }
+  next()
+}
+
+const verify = function (req, res, next) {
+  if (req.user) {
+    next()
   } else {
-    res.status(401).json({
+    res.status(403).json({
       err: true,
-      code: 401,
-      message: 'Unauthorized access, no token found'
+      code: 403,
+      message: 'Invalid token or expired'
     })
   }
 }
@@ -72,6 +60,7 @@ const isManager = function (req) {
 
 module.exports = {
   sign,
+  check,
   verify,
   verifyManager,
   isManager
