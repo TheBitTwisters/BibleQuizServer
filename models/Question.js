@@ -18,7 +18,6 @@ const Question = class Question extends BaseModel {
   order      = 0          // tinyint
   question   = ""         // text
   reference  = ""         // varchar(255)
-  layout     = ""         // varchar(8)
   score      = ""         // tinyint
   created_at = Date.now() // datetime : default now()
 
@@ -32,7 +31,6 @@ const Question = class Question extends BaseModel {
     this.order      = param.order      || 0
     this.question   = param.question   || ""
     this.reference  = param.reference  || ""
-    this.layout     = param.layout     || ""
     this.score      = param.score      || 0
     this.created_at = param.created_at || Date.now()
   }
@@ -47,7 +45,6 @@ const Question = class Question extends BaseModel {
       order:      this.order,
       question:   this.question,
       reference:  this.reference,
-      layout:     this.layout,
       score:      this.score,
       created_at: this.created_at
     }
@@ -62,7 +59,6 @@ const Question = class Question extends BaseModel {
       order:     this.order,
       question:  this.question,
       reference: this.reference,
-      layout:    this.layout,
       score:     this.score
     }
   }

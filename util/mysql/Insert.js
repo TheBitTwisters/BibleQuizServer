@@ -26,7 +26,7 @@ class Insert {
     var columns = []
     var values = []
     for (var column of this.columns) {
-      columns.push(column)
+      columns.push('`'+column+'`')
       values.push('?')
     }
     var sql = `
