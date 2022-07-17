@@ -43,6 +43,7 @@ const createLevel = (req, res) => {
           err: false,
           code: 200,
           message: 'Level created successfully',
+          level: level,
           session: req.session
         })
       } else {
@@ -69,6 +70,7 @@ const updateLevel = (req, res) => {
               err: false,
               code: 200,
               message: 'Level updated successfully',
+              level: level,
               session: req.session
             })
           } else {

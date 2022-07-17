@@ -28,6 +28,7 @@ const createPlayer = (req, res) => {
           err: false,
           code: 200,
           message: 'Player created successfully',
+          player: player,
           session: req.session
         })
       } else {
@@ -54,6 +55,7 @@ const updatePlayer = (req, res) => {
               err: false,
               code: 200,
               message: 'Player updated successfully',
+              player: player,
               session: req.session
             })
           } else {

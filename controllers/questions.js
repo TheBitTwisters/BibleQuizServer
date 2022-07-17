@@ -118,6 +118,7 @@ const createQuestion = (req, res) => {
           err: false,
           code: 200,
           message: 'Question created successfully',
+          question: question,
           session: req.session
         })
       } else {
@@ -139,20 +140,17 @@ const updateQuestion = (req, res) => {
       question.updateData(req.body.question)
       question.save()
         .then(result => {
-          if (result) {
-            res.status(200).json({
-              err: false,
-              code: 200,
-              message: 'Question updated successfully',
-              session: req.session
-            })
-          } else {
-            res.status(409).json({
-              err: true,
-              code: 409,
-              message: 'Failed to update question'
-            })
+          var message = 'Question updated successfully'
+          if (!result) {
+            message = 'Question is unchanged'
           }
+          res.status(200).json({
+            err: false,
+            code: 200,
+            message: message,
+            question: question,
+            session: req.session
+          })
         })
     })
     .catch(err => {

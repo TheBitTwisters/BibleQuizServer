@@ -164,6 +164,7 @@ const createGame = (req, res) => {
           err: false,
           code: 200,
           message: 'Game created successfully',
+          game: game,
           session: req.session
         })
       } else {
@@ -190,6 +191,7 @@ const updateGame = (req, res) => {
               err: false,
               code: 200,
               message: 'Game updated successfully',
+              game: game,
               session: req.session
             })
           } else {

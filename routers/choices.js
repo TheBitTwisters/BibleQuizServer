@@ -16,4 +16,8 @@ router.post('/',           jwt.check, jwt.verify, jwt.verifyManager, choicesCtrl
 
 router.put('/:choice_id', jwt.check, jwt.verify, jwt.verifyManager, choicesCtrl.updateChoice)
 
+// DELETE
+
+router.delete('/:choice_id', jwt.check, jwt.verify, jwt.verifyManager, choicesCtrl.deleteChoice)
+
 module.exports = router

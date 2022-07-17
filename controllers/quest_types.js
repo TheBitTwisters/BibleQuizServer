@@ -43,6 +43,7 @@ const createQuestType = (req, res) => {
           err: false,
           code: 200,
           message: 'QuestType created successfully',
+          quest_type: quest_type,
           session: req.session
         })
       } else {
@@ -69,6 +70,7 @@ const updateQuestType = (req, res) => {
               err: false,
               code: 200,
               message: 'QuestType updated successfully',
+              quest_type: quest_type,
               session: req.session
             })
           } else {

@@ -7,7 +7,7 @@ const playersCtrl = require('../controllers/players')
 router.get('/', jwt.check, jwt.verify, jwt.verifyManager, playersCtrl.getAll)
 
 // /players/save
-router.post('/',          jwt.check, jwt.verify, jwt.verifyManager, playersCtrl.savePlayer)
-router.put('/:player_id', jwt.check, jwt.verify, jwt.verifyManager, playersCtrl.savePlayer)
+router.post('/',          jwt.check, jwt.verify, jwt.verifyManager, playersCtrl.createPlayer)
+router.put('/:player_id', jwt.check, jwt.verify, jwt.verifyManager, playersCtrl.updatePlayer)
 
 module.exports = router
