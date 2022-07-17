@@ -19,45 +19,22 @@ const getAll = (req, res) => {
     })
 }
 
-const getAttendance = (req, res) => {
-  Attendance.search({ game_id: req.params.game_id })
-  .then(async (results) => {
-    var players = []
-    for (let attendance of results) {
-      var player = await Player.get({ id: attendance.player_id })
-      players.push(player)
-    }
-    res.status(200).json({
-      err: false,
-      code: 200,
-      message: 'Attendance fetched successfully',
-      players: players,
-      session: req.session
-    })
-  }).catch(err => {
-    res.status(500).json(err)
-  })
-}
-
-const savePlayer = (req, res) => {
-  const player = new Player(req.body.player)
-  if (req.params.hasOwnProperty('player_id')) {
-    player.id = req.params.player_id
-  }
+const createPlayer = (req, res) => {
+  const player = new User(req.body.player)
   player.save()
     .then(result => {
       if (result) {
         res.status(200).json({
           err: false,
           code: 200,
-          message: 'Player details saved successfully',
+          message: 'Player created successfully',
           session: req.session
         })
       } else {
         res.status(409).json({
           err: true,
           code: 409,
-          message: 'Failed to save player details'
+          message: 'Failed to create player'
         })
       }
     })
@@ -66,8 +43,35 @@ const savePlayer = (req, res) => {
     })
 }
 
+const updatePlayer = (req, res) => {
+  User.get({ id: req.params.player_id })
+    .then(player => {
+      player.updateData(req.body.player)
+      player.save()
+        .then(result => {
+          if (result) {
+            res.status(200).json({
+              err: false,
+              code: 200,
+              message: 'Player updated successfully',
+              session: req.session
+            })
+          } else {
+            res.status(409).json({
+              err: true,
+              code: 409,
+              message: 'Failed to update player'
+            })
+          }
+        })
+    })
+    .catch(err => {
+      res.status(500).json(err)
+    })
+}
+
 module.exports = {
   getAll,
-  getAttendance,
-  savePlayer
+  createPlayer,
+  updatePlayer
 }

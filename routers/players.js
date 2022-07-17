@@ -4,13 +4,10 @@ const jwt         = require('../middlewares/jwt')
 const playersCtrl = require('../controllers/players')
 
 // /players/all
-router.get('/all', jwt.verify, playersCtrl.getAll)
+router.get('/', jwt.check, jwt.verify, jwt.verifyManager, playersCtrl.getAll)
 
 // /players/save
-router.post('/save', jwt.verify, playersCtrl.savePlayer)
-router.put('/:player_id', jwt.verify, playersCtrl.savePlayer)
-
-// /players/attendance
-router.get('/attendance', jwt.verify, playersCtrl.getAttendance)
+router.post('/',          jwt.check, jwt.verify, jwt.verifyManager, playersCtrl.savePlayer)
+router.put('/:player_id', jwt.check, jwt.verify, jwt.verifyManager, playersCtrl.savePlayer)
 
 module.exports = router
