@@ -6,7 +6,7 @@ const Question = class Question extends BaseModel {
   }
   static get sortBy() {
     return {
-      'id': 'ASC'
+      'order': 'ASC'
     }
   }
 

@@ -68,14 +68,14 @@ const updateLevel = (req, res) => {
             res.status(200).json({
               err: false,
               code: 200,
-              message: 'Level created successfully',
+              message: 'Level updated successfully',
               session: req.session
             })
           } else {
             res.status(409).json({
               err: true,
               code: 409,
-              message: 'Failed to create level'
+              message: 'Failed to update level'
             })
           }
         })

@@ -111,7 +111,7 @@ class BaseSelect {
     var sql = ''
     var sorts = []
     for (var sortKey in this.sortKeys) {
-      sorts.push(sortKey + " " + this.sortKeys[sortKey])
+      sorts.push(`\`${sortKey}\`` + " " + this.sortKeys[sortKey])
     }
     if (sorts.length > 0) {
       sql += " ORDER BY " + sorts.join(' , ')

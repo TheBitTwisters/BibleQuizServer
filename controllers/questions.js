@@ -143,14 +143,14 @@ const updateQuestion = (req, res) => {
             res.status(200).json({
               err: false,
               code: 200,
-              message: 'Question details saved successfully',
+              message: 'Question updated successfully',
               session: req.session
             })
           } else {
             res.status(409).json({
               err: true,
               code: 409,
-              message: 'Failed to save question details'
+              message: 'Failed to update question'
             })
           }
         })
