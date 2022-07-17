@@ -12,6 +12,7 @@ const Choice = class Choice extends BaseModel {
 
   id          = 0  // int
   question_id = 0  // int REF questions.id
+  label       = "" // varchar(8)
   value       = "" // text
   is_answer   = 0  // tinyint(1)
 
@@ -19,6 +20,7 @@ const Choice = class Choice extends BaseModel {
     super(param)
     this.id          = param.id          || 0
     this.question_id = param.question_id || 1
+    this.label       = param.label       || ""
     this.value       = param.value       || ""
     this.is_answer   = param.is_answer   || 0
   }
@@ -27,6 +29,7 @@ const Choice = class Choice extends BaseModel {
     return {
       id:          this.id,
       question_id: this.question_id,
+      label:       this.label,
       value:       this.value
     }
   }
@@ -34,6 +37,7 @@ const Choice = class Choice extends BaseModel {
   toJsonData() {
     return {
       question_id: this.question_id,
+      label:       this.label,
       value:       this.value,
       is_answer:   this.is_answer
     }
