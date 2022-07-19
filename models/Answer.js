@@ -28,7 +28,7 @@ const Answer = class Answer extends BaseModel {
           sql += ' WHERE A.game_id = ? '
           q.setParams({ game_id: game_id })
         }
-        sql += ' GROUP BY U.id ORDER BY score DESC, U.fullname ASC '
+        sql += ' GROUP BY U.id ORDER BY score DESC, U.last_name ASC, U.first_name ASC '
         q.setSql(sql)
         await q.execute()
         var results = q.getList()
