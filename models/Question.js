@@ -20,6 +20,7 @@ const Question = class Question extends BaseModel {
   reference  = ""         // varchar(255)
   score      = ""         // tinyint
   created_at = Date.now() // datetime : default now()
+  locked_at  = null       // datetime : default null
 
   constructor(param = {}) {
     super(param)
@@ -33,6 +34,31 @@ const Question = class Question extends BaseModel {
     this.reference  = param.reference  || ""
     this.score      = param.score      || 0
     this.created_at = param.created_at || Date.now()
+    this.locked_at  = param.locked_at  || null
+  }
+
+  lock() {
+    return new Promise(async (resolve, reject) => {
+      try {
+        var result = false
+        if (this.id > 0) {
+          var q = new mysql.CustomQuery()
+          var sql = 'UPDATE questions SET locked = NOW() WHERE id=?'
+          q.setSql(sql)
+          q.setParams({ question_id: this.id })
+          await q.execute()
+          result = q.results.changedRows > 0
+        }
+        resolve(result)
+      } catch (err) {
+        console.error(err)
+        reject({
+          err: true,
+          code: 503,
+          message: 'Internal(DB) server error'
+        })
+      }
+    })
   }
 
   toPublicData() {
@@ -46,7 +72,8 @@ const Question = class Question extends BaseModel {
       question:   this.question,
       reference:  this.reference,
       score:      this.score,
-      created_at: this.created_at
+      created_at: this.created_at,
+      locked_at:  this.locked_at
     }
   }
 

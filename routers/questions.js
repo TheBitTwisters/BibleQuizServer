@@ -13,6 +13,7 @@ router.get('/:question_id/answers', jwt.check, jwt.verify, jwt.verifyManager, qu
 
 router.post('/',                    jwt.check, jwt.verify, jwt.verifyManager, questionsCtrl.createQuestion)
 router.post('/:question_id/answer', jwt.check,                                questionsCtrl.submitAnswer)
+router.post('/:question_id/lock',   jwt.check, jwt.verify, jwt.verifyManager, questionsCtrl.lockQuestion)
 
 // PUT
 
