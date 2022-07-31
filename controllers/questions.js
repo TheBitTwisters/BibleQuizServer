@@ -78,10 +78,14 @@ const submitAnswer = (req, res) => {
         answer:      req.body.answer
       })
         .then(answer => {
+          var message = 'Answer submitted successfully'
+          if (answer.checked == 1) {
+            message = 'Answer has been checked'
+          }
           res.status(200).json({
             err: false,
             code: 200,
-            message: 'Question answer submitted successfully',
+            message: message,
             answer: answer,
             session: req.session
           })
@@ -93,7 +97,7 @@ const submitAnswer = (req, res) => {
 
 const getSubmittedAnswers = (req, res) => {
   Question.get({ id: req.params.question_id }, {})
-    .then(async (question) => {
+    .then(question => {
       Answer.getQuestionAnswers(question.id)
         .then(list => {
           res.status(200).json({
@@ -101,6 +105,28 @@ const getSubmittedAnswers = (req, res) => {
             code: 200,
             message: 'Question answers fetched successfully',
             answers: list,
+            session: req.session
+          })
+        })
+    }).catch(err => {
+      res.status(500).json(err)
+    })
+}
+
+const lockQuestion = (req, res) => {
+  Question.get({ id: req.params.question_id }, {})
+    .then(question => {
+      question.lock()
+        .then(result => {
+          var message = 'Question has been locked'
+          if (!result) {
+            message = 'Failed to lock question'
+          }
+          res.status(200).json({
+            err: false,
+            code: 200,
+            message: message,
+            answer: answer,
             session: req.session
           })
         })
@@ -163,6 +189,7 @@ module.exports = {
   getAnswer,
   submitAnswer,
   getSubmittedAnswers,
+  lockQuestion,
   createQuestion,
   updateQuestion
 }
