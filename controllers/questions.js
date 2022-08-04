@@ -71,25 +71,34 @@ const getAnswer = (req, res) => {
 const submitAnswer = (req, res) => {
   Question.get({ id: req.params.question_id }, {})
     .then(question => {
-      Answer.submit({
-        game_id:     question.game_id,
-        question_id: question.id,
-        user_id:     req.user.id,
-        answer:      req.body.answer
-      })
-        .then(answer => {
-          var message = 'Answer submitted successfully'
-          if (answer.checked == 1) {
-            message = 'Answer has been checked'
-          }
-          res.status(200).json({
-            err: false,
-            code: 200,
-            message: message,
-            answer: answer,
-            session: req.session
-          })
+      if (question.locked_at) {
+        res.status(200).json({
+          err: false,
+          code: 204,
+          message: 'Failed to accept answer, question locked',
+          session: req.session
         })
+      } else {
+        Answer.submit({
+          game_id:     question.game_id,
+          question_id: question.id,
+          user_id:     req.user.id,
+          answer:      req.body.answer
+        })
+          .then(answer => {
+            var message = 'Answer submitted successfully'
+            if (answer.checked == 1) {
+              message = 'Answer has been checked'
+            }
+            res.status(200).json({
+              err: false,
+              code: 200,
+              message: message,
+              answer: answer,
+              session: req.session
+            })
+          })
+      }
     }).catch(err => {
       res.status(500).json(err)
     })
