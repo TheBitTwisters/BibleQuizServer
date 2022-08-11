@@ -45,7 +45,7 @@ const Question = class Question extends BaseModel {
           var q = new mysql.CustomQuery()
           var sql = 'UPDATE questions SET locked = NOW() WHERE id=?'
           q.setSql(sql)
-          q.setParams({ question_id: this.id })
+          q.setParams({ id: this.id })
           await q.execute()
           result = q.results.changedRows > 0
         }

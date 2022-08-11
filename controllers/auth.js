@@ -1,25 +1,26 @@
-const bcrypt = require('bcrypt')
-const User   = require('../models/User')
-const Game   = require('../models/Game')
-const jwt    = require('../middlewares/jwt')
+const bcrypt     = require('bcrypt')
+const Manager    = require('../models/Manager')
+const Attendance = require('../models/Attendance')
+const Game       = require('../models/Game')
+const jwt        = require('../middlewares/jwt')
 
 const signinManager = (req, res) => {
-  User.get({ name: req.body.name })
-    .then(async (user) => {
-      if (user) {
+  Manager.get({ name: req.body.name })
+    .then(async (manager) => {
+      if (manager) {
         // comparing passwords
-        var result = await bcrypt.compareSync(req.body.pin, user.pin)
+        var result = await bcrypt.compareSync(req.body.pin, manager.pin)
         if (result) {
-          // get session by signing the user_id
-          var session = jwt.sign(user.id)
+          // get session by signing the manager_id
+          var session = jwt.sign(manager.id)
           // get games
           var games = await Game.getAll()
-          // responding to client request with user profile success message and  access token.
+          // responding to client request with manager profile success message and  access token.
           res.status(200).json({
             err: false,
             code: 200,
             message: 'Login successful',
-            user: user.toPublicData(),
+            manager: manager.toPublicData(),
             games: games,
             session: session
           })
@@ -34,7 +35,7 @@ const signinManager = (req, res) => {
         res.status(404).json({
           err: true,
           code: 404,
-          message: 'User not found'
+          message: 'manager not found'
         })
       }
     })
@@ -45,17 +46,19 @@ const signinManager = (req, res) => {
 }
 
 const signinPlayer = (req, res) => {
-  User.get({ name: req.body.name })
-    .then(user => {
-      if (user) {
-        // get session by signing the user_id
-        var session = jwt.sign(user.id)
-        // responding to client request with user profile success message and  access token.
+  Attendance.get({ pass: req.body.pass })
+    .then(async (player) => {
+      if (player) {
+        // get session by signing the manager_id
+        var session = jwt.sign(player.id, 'player')
+        var game = await Game.get({ id: player.game_id })
+        // responding to client request with manager profile success message and  access token.
         res.status(200).json({
           err: false,
           code: 200,
           message: 'Login successful',
-          user: user.toPublicData(),
+          player: player.toPublicData(),
+          game: game,
           session: session
         })
       } else {

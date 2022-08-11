@@ -7,29 +7,25 @@ const Answer = class Answer extends BaseModel {
     return 'answers'
   }
 
-  id           = 0          // int
-  game_id      = 0          // int REF games.id
-  question_id  = 0          // int REF questions.id
-  user_id      = 0          // int REF users.id
-  answer       = ""         // text
-  score        = ""         // tinyint
-  submitted_at = Date.now() // datetime : default now()
+  id            = 0          // int
+  game_id       = 0          // int REF games.id
+  question_id   = 0          // int REF questions.id
+  attendance_id = 0          // int REF attendances.id
+  answer        = ""         // text
+  score         = ""         // tinyint
+  submitted_at  = Date.now() // datetime : default now()
 
-  static getAllGamesScores() {
-    return this.getGameScores(0)
-  }
-
-  static getGameScores(game_id = 0) {
+  static getGameScores(game_id) {
     return new Promise(async (resolve, reject) => {
       try {
         var q = new mysql.CustomQuery()
-        var sql = 'SELECT A.game_id, U.id user_id, SUM(A.score) score FROM answers A INNER JOIN users U ON U.id = A.user_id '
-        if (game_id > 0) {
-          sql += ' WHERE A.game_id = ? '
-          q.setParams({ game_id: game_id })
-        }
-        sql += ' GROUP BY U.id ORDER BY score DESC, U.last_name ASC, U.first_name ASC '
-        q.setSql(sql)
+        q.setSql(`
+          SELECT T.name, SUM(A.score) score
+            FROM answers A INNER JOIN attendances T ON T.id = A.attendance_id
+           WHERE A.game_id = ?
+        GROUP BY T.id ORDER BY score DESC, T.name ASC
+        `)
+        q.setParams({ game_id: game_id })
         await q.execute()
         var results = q.getList()
         var list = []

@@ -7,7 +7,7 @@ const Game = class Game extends BaseModel {
   }
 
   id                  = 0          // int
-  active              = true       // tinyint(1)
+  active              = 1          // tinyint(1)
   title               = ""         // varchar(64)
   date                = ""         // date : default curdate()
   current_question_id = 0          // int (REF) questions.id

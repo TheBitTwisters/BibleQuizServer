@@ -1,41 +1,43 @@
 const bcrypt     = require('bcrypt')
-const User       = require('../models/User')
+const Member     = require('../models/Member')
+const Group      = require('../models/Group')
 const Attendance = require('../models/Attendance')
 const jwt        = require('../middlewares/jwt')
 
-const getAll = (req, res) => {
-  User.search({ type: 'player' }, {})
-    .then(list => {
-      res.status(200).json({
-        err: false,
-        code: 200,
-        message: 'Players fetched successfully',
-        players: list,
-        session: req.session
-      })
+const getAll = async (req, res) => {
+  try {
+    var members = await Member.getAll()
+    var groups = await Group.getAll()
+    res.status(200).json({
+      err: false,
+      code: 200,
+      message: 'All groups and members fetched successfully',
+      members: members,
+      groups: groups,
+      session: req.session
     })
-    .catch(err => {
-      res.status(500).json(err)
-    })
+  } catch (err) {
+    res.status(500).json(err)
+  }
 }
 
-const createPlayer = (req, res) => {
-  const player = new User(req.body.player)
-  player.save()
+const createGroup = (req, res) => {
+  const group = new Group(req.body.group)
+  group.save()
     .then(result => {
       if (result) {
         res.status(200).json({
           err: false,
           code: 200,
-          message: 'Player created successfully',
-          player: player,
+          message: 'Group created successfully',
+          group: group,
           session: req.session
         })
       } else {
         res.status(409).json({
           err: true,
           code: 409,
-          message: 'Failed to create player'
+          message: 'Failed to create group'
         })
       }
     })
@@ -44,25 +46,78 @@ const createPlayer = (req, res) => {
     })
 }
 
-const updatePlayer = (req, res) => {
-  User.get({ id: req.params.player_id })
-    .then(player => {
-      player.updateData(req.body.player)
-      player.save()
+const updateGroup = (req, res) => {
+  Group.get({ id: req.params.group_id })
+    .then(group => {
+      group.updateData(req.body.group)
+      group.save()
         .then(result => {
           if (result) {
             res.status(200).json({
               err: false,
               code: 200,
-              message: 'Player updated successfully',
-              player: player,
+              message: 'Group updated successfully',
+              group: group,
               session: req.session
             })
           } else {
             res.status(409).json({
               err: true,
               code: 409,
-              message: 'Failed to update player'
+              message: 'Failed to update group'
+            })
+          }
+        })
+    })
+    .catch(err => {
+      res.status(500).json(err)
+    })
+}
+
+const createMember = (req, res) => {
+  const member = new Member(req.body.member)
+  member.save()
+    .then(result => {
+      if (result) {
+        res.status(200).json({
+          err: false,
+          code: 200,
+          message: 'Member created successfully',
+          player: member,
+          session: req.session
+        })
+      } else {
+        res.status(409).json({
+          err: true,
+          code: 409,
+          message: 'Failed to create member'
+        })
+      }
+    })
+    .catch(err => {
+      res.status(500).json(err)
+    })
+}
+
+const updateMember = (req, res) => {
+  Member.get({ id: req.params.member_id })
+    .then(member => {
+      member.updateData(req.body.member)
+      member.save()
+        .then(result => {
+          if (result) {
+            res.status(200).json({
+              err: false,
+              code: 200,
+              message: 'Member updated successfully',
+              member: member,
+              session: req.session
+            })
+          } else {
+            res.status(409).json({
+              err: true,
+              code: 409,
+              message: 'Failed to update member'
             })
           }
         })
@@ -74,6 +129,8 @@ const updatePlayer = (req, res) => {
 
 module.exports = {
   getAll,
-  createPlayer,
-  updatePlayer
+  createGroup,
+  updateGroup,
+  createMember,
+  updateMember
 }

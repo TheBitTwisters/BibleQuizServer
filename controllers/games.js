@@ -6,7 +6,6 @@ const Question   = require('../models/Question')
 const Choice     = require('../models/Choice')
 const Answer     = require('../models/Answer')
 const Attendance = require('../models/Attendance')
-const User       = require('../models/User')
 const jwt        = require('../middlewares/jwt')
 
 const getAll = (req, res) => {
@@ -101,16 +100,11 @@ const getDetails = (req, res) => {
 
 const getPlayers = (req, res) => {
   Attendance.search({ game_id: req.params.game_id })
-    .then(async (results) => {
-      var players = []
-      for (let attendance of results) {
-        var player = await User.get({ id: attendance.user_id })
-        players.push(player.toPublicData())
-      }
+    .then(players => {
       res.status(200).json({
         err: false,
         code: 200,
-        message: 'Attendance fetched successfully',
+        message: 'Players fetched successfully',
         players: players,
         session: req.session
       })
@@ -138,16 +132,20 @@ const getScores = (req, res) => {
 const setCurrentQuestion = (req, res) => {
   Game.get({ id: req.params.game_id })
     .then(game => {
-      game.current_question_id = req.body.question_id
-      game.save()
-        .then(() => {
-          res.status(200).json({
-            err: false,
-            code: 200,
-            message: 'Current Game\'s question changed successfully',
-            game: game,
-            session: req.session
-          })
+      Question.get({ id: req.body.question_id })
+        .then(question => {
+          game.current_question_id = question.id
+          game.save()
+            .then(() => {
+              res.status(200).json({
+                err: false,
+                code: 200,
+                message: 'Current Game\'s question changed successfully',
+                game: game,
+                question: question,
+                session: req.session
+              })
+            })
         })
     })
     .catch(err => {

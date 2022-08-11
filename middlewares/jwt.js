@@ -1,9 +1,13 @@
-const jwt  = require('jsonwebtoken')
-const User = require('../models/User')
+const jwt        = require('jsonwebtoken')
+const Manager    = require('../models/Manager')
+const Attendance = require('../models/Attendance')
 
-const sign = function (user_id) {
+const sign = function (id, type) {
   var token = process.env.JWT_PREFIX + jwt.sign(
-    { user_id: user_id },
+    {
+      id: id,
+      type: type
+    },
     process.env.JWT_SECRET,
     { expiresIn: parseInt(process.env.JWT_TIMESPAN) }
   )
@@ -17,13 +21,20 @@ const check = async function (req, res, next) {
   try {
     var token = req.headers.authorization.replace(process.env.JWT_PREFIX, '')
     var decoded = jwt.verify(token, process.env.JWT_SECRET)
-    await User.get({ id: decoded.user_id })
-      .then(user => {
-        if (user) {
-          req.user = user
-          req.session = sign(user.id)
+    switch (decoded.type) {
+      case 'manager':
+        var manager = await Manager.get({ id: decoded.id })
+        if (manager) {
+          req.manager = manager
+          req.session = sign(manager.id, 'manager')
         }
-      })
+      case 'player':
+        var player = await Attendance.get({ id: decoded.id })
+        if (player) {
+          req.player = player
+          req.session = sign(player.id, 'player')
+        }
+    }
   } catch (err) {
     console.log('JWT verification error')
   }
@@ -31,7 +42,7 @@ const check = async function (req, res, next) {
 }
 
 const verify = function (req, res, next) {
-  if (req.user) {
+  if (req.player || req.manager) {
     next()
   } else {
     res.status(403).json({
@@ -43,7 +54,7 @@ const verify = function (req, res, next) {
 }
 
 const verifyManager = function (req, res, next) {
-  if (req.user.type == 'manager') {
+  if (req.manager) {
     next()
   } else {
     res.status(401).json({
@@ -55,7 +66,7 @@ const verifyManager = function (req, res, next) {
 }
 
 const isManager = function (req) {
-  return req.user && req.user.type == 'manager'
+  return req.manager
 }
 
 module.exports = {
