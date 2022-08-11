@@ -2,7 +2,7 @@ const BaseModel = require('./BaseModel')
 
 const Group  = class Group extends BaseModel {
   static get tableName() {
-    return 'users'
+    return 'groups'
   }
   static get sortBy() {
     return {

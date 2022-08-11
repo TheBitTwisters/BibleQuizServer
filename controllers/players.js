@@ -20,6 +20,42 @@ const getAll = async (req, res) => {
     res.status(500).json(err)
   }
 }
+const getGroups = (req, res) => {
+  Group.getAll()
+    .then(async (groups) => {
+      for (let group of groups) {
+        group.members = await Member.search({ group_id: group.id }, {})
+      }
+      res.status(200).json({
+        err: false,
+        code: 200,
+        message: 'Groups fetched successfully',
+        groups: groups,
+        session: req.session
+      })
+    })
+    .catch(err => {
+      res.status(500).json(err)
+    })
+}
+const getMembers = (req, res) => {
+  Member.getAll()
+    .then(async (members) => {
+      for (let member of members) {
+        member.group = await Group.get({ id: member.group_id }, {})
+      }
+      res.status(200).json({
+        err: false,
+        code: 200,
+        message: 'Members fetched successfully',
+        members: members,
+        session: req.session
+      })
+    })
+    .catch(err => {
+      res.status(500).json(err)
+    })
+}
 
 const createGroup = (req, res) => {
   const group = new Group(req.body.group)
@@ -83,7 +119,7 @@ const createMember = (req, res) => {
           err: false,
           code: 200,
           message: 'Member created successfully',
-          player: member,
+          member: member,
           session: req.session
         })
       } else {
@@ -98,7 +134,6 @@ const createMember = (req, res) => {
       res.status(500).json(err)
     })
 }
-
 const updateMember = (req, res) => {
   Member.get({ id: req.params.member_id })
     .then(member => {
@@ -126,11 +161,40 @@ const updateMember = (req, res) => {
       res.status(500).json(err)
     })
 }
+const setMemberGroup = (req, res) => {
+  Member.get({ id: req.params.member_id })
+    .then(member => {
+      member.setGroup(req.body.group_id)
+        .then(result => {
+          if (result) {
+            res.status(200).json({
+              err: false,
+              code: 200,
+              message: 'Member\'s group updated successfully',
+              member: member,
+              session: req.session
+            })
+          } else {
+            res.status(409).json({
+              err: true,
+              code: 409,
+              message: 'Failed to update member\'s group'
+            })
+          }
+        })
+    })
+    .catch(err => {
+      res.status(500).json(err)
+    })
+}
 
 module.exports = {
   getAll,
+  getGroups,
+  getMembers,
   createGroup,
   updateGroup,
   createMember,
-  updateMember
+  updateMember,
+  setMemberGroup
 }

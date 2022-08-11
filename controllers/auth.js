@@ -12,7 +12,7 @@ const signinManager = (req, res) => {
         var result = await bcrypt.compareSync(req.body.pin, manager.pin)
         if (result) {
           // get session by signing the manager_id
-          var session = jwt.sign(manager.id)
+          var session = jwt.sign(manager.id, 'manager')
           // get games
           var games = await Game.getAll()
           // responding to client request with manager profile success message and  access token.
