@@ -36,6 +36,8 @@ app.use('/quest-types', require('./routers/quest_types'))
 app.use('/questions', require('./routers/questions'))
 // :: /choices
 app.use('/choices', require('./routers/choices'))
+// :: /scores
+app.use('/scores', require('./routers/scores'))
 
 // serve
 app.listen(port, () => {
