@@ -115,12 +115,15 @@ const getPlayers = (req, res) => {
 
 const getScores = (req, res) => {
   Answer.getGameScores(req.params.game_id)
-    .then(list => {
+    .then(async (scores) => {
+      if (scores.length == 0) {
+        scores = await Attendance.search({ game_id: req.params.game_id })
+      }
       res.status(200).json({
         err: false,
         code: 200,
         message: 'Game scores fetched successfully',
-        scores: list,
+        scores: scores,
         session: req.session
       })
     })
@@ -143,6 +146,43 @@ const setCurrentQuestion = (req, res) => {
                 message: 'Current Game\'s question changed successfully',
                 game: game,
                 question: question,
+                session: req.session
+              })
+            })
+        })
+    })
+    .catch(err => {
+      res.status(500).json(err)
+    })
+}
+
+const addPlayer = (req, res) => {
+  Game.get({ id: req.params.game_id })
+    .then(game => {
+      const attend = new Attendance({
+        game_id: game.id,
+        name: req.body.name,
+        pass: req.body.pass
+      })
+      switch (req.body.type) {
+        case 'group':
+          attend.group_id = req.body.player_id
+          attend.member_id = null
+          break
+        case 'individual':
+          attend.member_id = req.body.player_id
+          attend.group_id = null
+          break
+      }
+      attend.save()
+        .then(() => {
+          Attendance.search({ game_id: game.id })
+            .then(players => {
+              res.status(200).json({
+                err: false,
+                code: 200,
+                message: 'Players updated',
+                players: players,
                 session: req.session
               })
             })
@@ -214,6 +254,7 @@ module.exports = {
   getQuestions,
   getCurrentQuestion,
   setCurrentQuestion,
+  addPlayer,
   createGame,
   updateGame
 }

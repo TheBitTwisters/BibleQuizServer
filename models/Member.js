@@ -26,6 +26,7 @@ const Member = class Member extends BaseModel {
     this.group_id   = param.group_id   || 0
     this.last_name  = param.last_name  || ""
     this.first_name = param.first_name || ""
+    this.fullname   = param.first_name + ' ' + param.last_name
     this.joined_at  = param.joined_at  || Date.now()
   }
 
