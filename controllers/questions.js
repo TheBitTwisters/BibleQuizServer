@@ -80,10 +80,10 @@ const submitAnswer = (req, res) => {
         })
       } else {
         Answer.submit({
-          game_id:     question.game_id,
-          question_id: question.id,
-          user_id:     req.user.id,
-          answer:      req.body.answer
+          game_id:       question.game_id,
+          question_id:   question.id,
+          attendance_id: req.player.id,
+          answer:        req.body.answer
         })
           .then(answer => {
             var message = 'Answer submitted successfully'
@@ -107,7 +107,7 @@ const submitAnswer = (req, res) => {
 const getSubmittedAnswers = (req, res) => {
   Question.get({ id: req.params.question_id }, {})
     .then(question => {
-      Answer.getQuestionAnswers(question.id)
+      Answer.search({ question_id: question.id }, {})
         .then(list => {
           res.status(200).json({
             err: false,
@@ -135,7 +135,7 @@ const lockQuestion = (req, res) => {
             err: false,
             code: 200,
             message: message,
-            answer: answer,
+            question: question,
             session: req.session
           })
         })

@@ -44,35 +44,12 @@ const Answer = class Answer extends BaseModel {
     })
   }
 
-  static getQuestionAnswers(question_id) {
-    return new Promise(async (resolve, reject) => {
-      try {
-        var q = new mysql.Query()
-        q.select('*').from(this.tableName).where({ question_id: question_id }).sortBy({ 'id': 'ASC' })
-        await q.execute()
-        var results = q.getList()
-        var list = []
-        for (var result of results) {
-          list.push(new this(result))
-        }
-        resolve(list)
-      } catch (err) {
-        console.error(err)
-        reject({
-          err: true,
-          code: 503,
-          message: 'Internal(DB) server error'
-        })
-      }
-    })
-  }
-
   static submit(params) {
     return new Promise(async (resolve, reject) => {
       try {
         this.search({
-          question_id: params.question_id,
-          user_id:     params.user_id
+          question_id:   params.question_id,
+          attendance_id: params.attendance_id
         }, {}).then(async (list) => {
           var answer = new this(params)
           answer.submitted_at = moment().utc().format('YYYY-MM-DD HH:mm:ss')
@@ -97,35 +74,57 @@ const Answer = class Answer extends BaseModel {
 
   constructor(param = {}) {
     super(param)
-    this.id           = param.id           || 0
-    this.game_id      = param.game_id      || 1
-    this.question_id  = param.question_id  || 1
-    this.user_id      = param.user_id      || 1
-    this.answer       = param.answer       || ""
-    this.score        = param.score        || 0
-    this.submitted_at = param.submitted_at || Date.now()
+    this.id            = param.id            || 0
+    this.game_id       = param.game_id       || 1
+    this.question_id   = param.question_id   || 1
+    this.attendance_id = param.attendance_id || 1
+    this.answer        = param.answer        || ""
+    this.score         = param.score         || 0
+    this.submitted_at  = param.submitted_at  || Date.now()
+  }
+
+  saveScore(score) {
+    this.score = score
+    return new Promise(async (resolve, reject) => {
+      try {
+        var result = false
+        if (this.id > 0) {
+          var u = new mysql.Update()
+          await u.update(this.constructor.tableName).set({ score: this.score }).where({ id: this.id }).execute()
+          result = u.result
+        }
+        resolve(result)
+      } catch (err) {
+        console.error(err)
+        reject({
+          err: true,
+          code: 503,
+          message: 'Internal(DB) server error'
+        })
+      }
+    })
   }
 
   toPublicData() {
     return {
-      id:           this.id,
-      game_id:      this.game_id,
-      question_id:  this.question_id,
-      user_id:      this.user_id,
-      answer:       this.answer,
-      score:        this.score,
-      submitted_at: this.submitted_at
+      id:            this.id,
+      game_id:       this.game_id,
+      question_id:   this.question_id,
+      attendance_id: this.attendance_id,
+      answer:        this.answer,
+      score:         this.score,
+      submitted_at:  this.submitted_at
     }
   }
 
   toJsonData() {
     return {
-      game_id:      this.game_id,
-      question_id:  this.question_id,
-      user_id:      this.user_id,
-      answer:       this.answer,
-      score:        this.score,
-      submitted_at: this.submitted_at
+      game_id:       this.game_id,
+      question_id:   this.question_id,
+      attendance_id: this.attendance_id,
+      answer:        this.answer,
+      score:         this.score,
+      submitted_at:  this.submitted_at
     }
   }
 }

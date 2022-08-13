@@ -1,3 +1,4 @@
+const mysql = require('../util/mysql')
 const BaseModel = require('./BaseModel')
 
 const Question = class Question extends BaseModel {
@@ -43,7 +44,7 @@ const Question = class Question extends BaseModel {
         var result = false
         if (this.id > 0) {
           var q = new mysql.CustomQuery()
-          var sql = 'UPDATE questions SET locked = NOW() WHERE id=?'
+          var sql = 'UPDATE questions SET locked_at = NOW() WHERE id=?'
           q.setSql(sql)
           q.setParams({ id: this.id })
           await q.execute()

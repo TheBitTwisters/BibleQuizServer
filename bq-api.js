@@ -38,6 +38,8 @@ app.use('/questions', require('./routers/questions'))
 app.use('/choices', require('./routers/choices'))
 // :: /scores
 app.use('/scores', require('./routers/scores'))
+// :: /answers
+app.use('/answers', require('./routers/answers'))
 
 // serve
 app.listen(port, () => {
