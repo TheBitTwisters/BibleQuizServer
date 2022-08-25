@@ -20,7 +20,7 @@ const Answer = class Answer extends BaseModel {
       try {
         var q = new mysql.CustomQuery()
         q.setSql(`
-          SELECT T.name, SUM(A.score) score
+          SELECT T.id player_id, T.name, SUM(A.score) score
             FROM answers A INNER JOIN attendances T ON T.id = A.attendance_id
            WHERE A.game_id = ?
         GROUP BY T.id ORDER BY score DESC, T.name ASC

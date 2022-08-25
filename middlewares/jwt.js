@@ -68,11 +68,15 @@ const verifyManager = function (req, res, next) {
 const isManager = function (req) {
   return req.manager
 }
+const isPlayer = function (req) {
+  return req.player
+}
 
 module.exports = {
   sign,
   check,
   verify,
   verifyManager,
-  isManager
+  isManager,
+  isPlayer
 }

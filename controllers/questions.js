@@ -14,7 +14,7 @@ const getDetails = (req, res) => {
         var level = await Level.get(question.level_id)
         var quest_type = await QuestType.get(question.type_id)
         var choices = await Choice.search({ question_id: question.id })
-        if (jwt.isManager(req)) {
+        if (question.locked_at || jwt.isManager(req)) {
           question.choices = choices
         } else {
           question.choices = []
@@ -72,9 +72,9 @@ const submitAnswer = (req, res) => {
   Question.get({ id: req.params.question_id }, {})
     .then(question => {
       if (question.locked_at) {
-        res.status(200).json({
+        res.status(409).json({
           err: false,
-          code: 204,
+          code: 409,
           message: 'Failed to accept answer, question locked',
           session: req.session
         })
@@ -126,18 +126,24 @@ const lockQuestion = (req, res) => {
   Question.get({ id: req.params.question_id }, {})
     .then(question => {
       question.lock()
-        .then(result => {
-          var message = 'Question has been locked'
-          if (!result) {
-            message = 'Failed to lock question'
+        .then(async (result) => {
+          if (result) {
+            var lockedQuestion = await Question.get({ id: question.id })
+            res.status(200).json({
+              err: false,
+              code: 200,
+              message: 'Question has been locked',
+              question: lockedQuestion,
+              session: req.session
+            })
+          } else {
+            res.status(409).json({
+              err: false,
+              code: 409,
+              message: 'Failed to lock question',
+              session: req.session
+            })
           }
-          res.status(200).json({
-            err: false,
-            code: 200,
-            message: message,
-            question: question,
-            session: req.session
-          })
         })
     }).catch(err => {
       res.status(500).json(err)

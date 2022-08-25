@@ -28,8 +28,14 @@ const getQuestions = (req, res) => {
   Question.search({ game_id: req.params.game_id }, {})
     .then(async (questions) => {
       for (let question of questions) {
+        if (jwt.isPlayer(req)) {
+          var answer = await Answer.search({ question_id: question.id, attendance_id: req.player.id })
+          if (answer.length > 0) {
+            question.submitted_answer = answer[0].answer
+          }
+        }
         var choices = await Choice.search({ question_id: question.id })
-        if (jwt.isManager(req)) {
+        if (question.locked_at || jwt.isManager(req)) {
           question.choices = choices
         } else {
           question.choices = []
@@ -46,6 +52,7 @@ const getQuestions = (req, res) => {
         session: req.session
       })
     }).catch(err => {
+      console.error(err)
       res.status(500).json(err)
     })
 }
@@ -76,13 +83,18 @@ const getCurrentQuestion = (req, res) => {
 
 const getDetails = (req, res) => {
   Game.get({ id: req.params.game_id })
-    .then(game => {
+    .then(async (game) => {
       if (game) {
+        var current_question = null
+        if (game.current_question_id > 0) {
+          current_question = await Question.get({ id: game.current_question_id })
+        }
         res.status(200).json({
           err: false,
           code: 200,
           message: 'Game details fetched successfully',
           game: game,
+          current_question: current_question,
           session: req.session
         })
       } else {
