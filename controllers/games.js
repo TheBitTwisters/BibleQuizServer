@@ -128,7 +128,7 @@ const modifyPlayersPass = (req, res) => {
   Attendance.search({ game_id: req.params.game_id })
     .then(async (players) => {
       for (let player of players) {
-        player.pass = req.params.game_id + '-' + gameplayer.pass
+        player.pass = req.params.game_id + '-' + player.pass
         await player.save()
       }
       res.status(200).json({
@@ -139,6 +139,7 @@ const modifyPlayersPass = (req, res) => {
         session: req.session
       })
     }).catch(err => {
+      console.error(err)
       res.status(500).json(err)
     })
 }
