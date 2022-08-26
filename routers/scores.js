@@ -7,4 +7,8 @@ const scoresCtrl = require('../controllers/scores')
 
 router.get('/', scoresCtrl.getAll)
 
+// POST
+
+router.post('/:game_id/:group_id', jwt.check, jwt.verify, jwt.verifyManager, scoresCtrl.setGroupGameScore)
+
 module.exports = router
