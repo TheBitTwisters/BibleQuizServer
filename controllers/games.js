@@ -147,21 +147,35 @@ const getScores = (req, res) => {
 const setCurrentQuestion = (req, res) => {
   Game.get({ id: req.params.game_id })
     .then(game => {
-      Question.get({ id: req.body.question_id })
-        .then(question => {
-          game.current_question_id = question.id
-          game.save()
-            .then(() => {
-              res.status(200).json({
-                err: false,
-                code: 200,
-                message: 'Current Game\'s question changed successfully',
-                game: game,
-                question: question,
-                session: req.session
+      if (req.body.question_id > 0) {
+        Question.get({ id: req.body.question_id })
+          .then(question => {
+            game.current_question_id = question.id
+            game.save()
+              .then(() => {
+                res.status(200).json({
+                  err: false,
+                  code: 200,
+                  message: 'Current Game\'s question changed successfully',
+                  game: game,
+                  question: question,
+                  session: req.session
+                })
               })
+          })
+      } else {
+        game.current_question_id = req.body.question_id
+        game.save()
+          .then(() => {
+            res.status(200).json({
+              err: false,
+              code: 200,
+              message: 'Game finished successfully',
+              game: game,
+              session: req.session
             })
-        })
+          })
+      }
     })
     .catch(err => {
       res.status(500).json(err)
