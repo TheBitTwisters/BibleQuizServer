@@ -14,9 +14,10 @@ router.get('/:game_id/scores',    jwt.check, gamesCtrl.getScores)
 
 // POST
 
-router.post('/',                  jwt.check, jwt.verify, jwt.verifyManager, gamesCtrl.createGame)
-router.post('/:game_id/question', jwt.check, jwt.verify, jwt.verifyManager, gamesCtrl.setCurrentQuestion)
-router.post('/:game_id/player',   jwt.check, jwt.verify, jwt.verifyManager, gamesCtrl.addPlayer)
+router.post('/',                        jwt.check, jwt.verify, jwt.verifyManager, gamesCtrl.createGame)
+router.post('/:game_id/question',       jwt.check, jwt.verify, jwt.verifyManager, gamesCtrl.setCurrentQuestion)
+router.post('/:game_id/player',         jwt.check, jwt.verify, jwt.verifyManager, gamesCtrl.addPlayer)
+router.post('/:game_id/players/modify', jwt.check, jwt.verify, jwt.verifyManager, gamesCtrl.modifyPlayersPass)
 
 // PUT
 

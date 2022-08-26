@@ -124,6 +124,24 @@ const getPlayers = (req, res) => {
       res.status(500).json(err)
     })
 }
+const modifyPlayersPass = (req, res) => {
+  Attendance.search({ game_id: req.params.game_id })
+    .then(async (players) => {
+      for (let player of players) {
+        player.pass = req.params.game_id + '-' + gameplayer.pass
+        await player.save()
+      }
+      res.status(200).json({
+        err: false,
+        code: 200,
+        message: 'Players pass modified successfully',
+        players: players,
+        session: req.session
+      })
+    }).catch(err => {
+      res.status(500).json(err)
+    })
+}
 
 const getScores = (req, res) => {
   Answer.getGameScores(req.params.game_id)
@@ -276,6 +294,7 @@ module.exports = {
   getAll,
   getDetails,
   getPlayers,
+  modifyPlayersPass,
   getScores,
   getQuestions,
   getCurrentQuestion,
