@@ -6,7 +6,8 @@ const QuestType = class QuestType extends BaseModel {
   }
   static get sortBy() {
     return {
-      'choices_count': 'DESC'
+      'choices_count': 'DESC',
+      'name'         : 'ASC'
     }
   }
 
