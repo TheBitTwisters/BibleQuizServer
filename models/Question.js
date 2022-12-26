@@ -13,6 +13,7 @@ const Question = class Question extends BaseModel {
 
   id         = 0          // int
   active     = true       // tinyint(1)
+  passplay   = false      // tinyint(1)
   game_id    = 0          // int REF games.id
   level_id   = 0          // int REF levels.id
   type_id    = 0          // int REF quest_types.id
@@ -27,6 +28,7 @@ const Question = class Question extends BaseModel {
     super(param)
     this.id         = param.id         || 0
     this.active     = param.active     || 1
+    this.passplay   = param.passplay   || 0
     this.game_id    = param.game_id    || 1
     this.level_id   = param.level_id   || 1
     this.type_id    = param.type_id    || 1
@@ -66,6 +68,7 @@ const Question = class Question extends BaseModel {
     return {
       id:         this.id,
       active:     this.active,
+      passplay:   this.passplay,
       game_id:    this.game_id,
       level_id:   this.level_id,
       type_id:    this.type_id,
@@ -81,6 +84,7 @@ const Question = class Question extends BaseModel {
   toJsonData() {
     return {
       active:    this.active,
+      passplay:  this.passplay,
       game_id:   this.game_id,
       level_id:  this.level_id,
       type_id:   this.type_id,

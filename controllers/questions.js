@@ -5,6 +5,7 @@ const Level     = require('../models/Level')
 const QuestType = require('../models/QuestType')
 const Choice    = require('../models/Choice')
 const Answer    = require('../models/Answer')
+const PassPlayAttendance = require('../models/PassPlayAttendance')
 const jwt       = require('../middlewares/jwt')
 
 const getDetails = (req, res) => {
@@ -68,9 +69,40 @@ const getAnswer = (req, res) => {
     })
 }
 
+const passplay = (req, res) => {
+  Question.get({ id: req.params.question_id }, {})
+    .then(async (question) => {
+      var passorplay = new PassPlayAttendance({
+        question_id: question.id,
+        attendance_id: req.player.id,
+        play: req.body.play
+      })
+      passorplay.save()
+        .then(result => {
+          if (result) {
+            res.status(200).json({
+              err: false,
+              code: 200,
+              message: 'Question pass or play successfully',
+              question_id: question.id,
+              session: req.session
+            })
+          } else {
+            res.status(409).json({
+              err: true,
+              code: 409,
+              message: 'Failed to pass or play'
+            })
+          }
+        })
+    }).catch(err => {
+      res.status(500).json(err)
+    })
+}
+
 const submitAnswer = (req, res) => {
   Question.get({ id: req.params.question_id }, {})
-    .then(question => {
+    .then(async (question) => {
       if (question.locked_at) {
         res.status(409).json({
           err: false,
@@ -79,25 +111,44 @@ const submitAnswer = (req, res) => {
           session: req.session
         })
       } else {
-        Answer.submit({
-          game_id:       question.game_id,
-          question_id:   question.id,
-          attendance_id: req.player.id,
-          answer:        req.body.answer
-        })
-          .then(answer => {
-            var message = 'Answer submitted successfully'
-            if (answer.checked == 1) {
-              message = 'Answer has been checked'
-            }
-            res.status(200).json({
-              err: false,
-              code: 200,
-              message: message,
-              answer: answer,
-              session: req.session
-            })
+        var canAnswer = true
+        if (question.passplay) {
+          var passplay = await PassPlayAttendance.get({
+            question_id: question.id,
+            attendance_id: req.player.id
           })
+          if (!passplay.play) {
+            canAnswer = false
+          }
+        }
+        if (canAnswer) {
+          Answer.submit({
+            game_id:       question.game_id,
+            question_id:   question.id,
+            attendance_id: req.player.id,
+            answer:        req.body.answer
+          })
+            .then(answer => {
+              var message = 'Answer submitted successfully'
+              if (answer.checked == 1) {
+                message = 'Answer has been checked'
+              }
+              res.status(200).json({
+                err: false,
+                code: 200,
+                message: message,
+                answer: answer,
+                session: req.session
+              })
+            })
+        } else {
+          res.status(409).json({
+            err: false,
+            code: 409,
+            message: 'Failed to accept answer, player passed',
+            session: req.session
+          })
+        }
       }
     }).catch(err => {
       res.status(500).json(err)
@@ -202,6 +253,7 @@ const updateQuestion = (req, res) => {
 module.exports = {
   getDetails,
   getAnswer,
+  passplay,
   submitAnswer,
   getSubmittedAnswers,
   lockQuestion,

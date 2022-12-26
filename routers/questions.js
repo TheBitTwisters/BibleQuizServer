@@ -11,9 +11,10 @@ router.get('/:question_id/answers', jwt.check, jwt.verify, jwt.verifyManager, qu
 
 // POST
 
-router.post('/',                    jwt.check, jwt.verify, jwt.verifyManager, questionsCtrl.createQuestion)
-router.post('/:question_id/answer', jwt.check,                                questionsCtrl.submitAnswer)
-router.post('/:question_id/lock',   jwt.check, jwt.verify, jwt.verifyManager, questionsCtrl.lockQuestion)
+router.post('/',                      jwt.check, jwt.verify, jwt.verifyManager, questionsCtrl.createQuestion)
+router.post('/:question_id/answer',   jwt.check,                                questionsCtrl.submitAnswer)
+router.post('/:question_id/passplay', jwt.check,                                questionsCtrl.passplay)
+router.post('/:question_id/lock',     jwt.check, jwt.verify, jwt.verifyManager, questionsCtrl.lockQuestion)
 
 // PUT
 
