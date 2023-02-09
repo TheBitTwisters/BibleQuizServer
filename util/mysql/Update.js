@@ -1,4 +1,4 @@
-const run = require('./run')
+import run from './run'
 
 class Update {
   table = ""
@@ -64,4 +64,4 @@ class Update {
   }
 }
 
-module.exports = Update
+export default Update

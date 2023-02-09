@@ -1,4 +1,4 @@
-const run = require('./run')
+import run from './run'
 
 class Insert {
   table = ""
@@ -43,4 +43,4 @@ class Insert {
   }
 }
 
-module.exports = Insert
+export default Insert

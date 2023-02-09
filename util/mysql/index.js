@@ -1,10 +1,10 @@
 
-exports.Query = require('./Query')
-exports.SearchQuery = require('./SearchQuery')
+export const Query = require('./Query').default
+export const SearchQuery = require('./SearchQuery').default
 
-exports.CustomQuery = require('./CustomQuery')
+export const CustomQuery = require('./CustomQuery').default
 
-exports.Insert = require('./Insert')
-exports.Update = require('./Update')
+export const Insert = require('./Insert').default
+export const Update = require('./Update').default
 
-exports.Delete = require('./Delete')
+export const Delete = require('./Delete').default

@@ -1,5 +1,5 @@
-const run        = require('./run')
-const BaseSelect = require('./BaseSelect')
+import run from './run'
+import BaseSelect from './BaseSelect'
 
 class CustomQuery extends BaseSelect {
   sql = ''
@@ -20,4 +20,4 @@ class CustomQuery extends BaseSelect {
   }
 }
 
-module.exports = CustomQuery
+export default CustomQuery

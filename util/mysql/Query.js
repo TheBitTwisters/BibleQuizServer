@@ -1,5 +1,5 @@
-const run        = require('./run')
-const BaseSelect = require('./BaseSelect')
+import run from './run'
+import BaseSelect from './BaseSelect'
 
 class Query extends BaseSelect {
   async execute() {
@@ -7,4 +7,4 @@ class Query extends BaseSelect {
   }
 }
 
-module.exports = Query
+export default Query

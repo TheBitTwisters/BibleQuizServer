@@ -1,4 +1,4 @@
-const run = require('./run')
+import run from './run'
 
 class Delete {
   table = ""
@@ -42,4 +42,4 @@ class Delete {
   }
 }
 
-module.exports = Delete
+export default Delete

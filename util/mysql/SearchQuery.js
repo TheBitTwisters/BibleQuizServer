@@ -1,5 +1,5 @@
-const run        = require('./run')
-const BaseSelect = require('./BaseSelect')
+import run from './run'
+import BaseSelect from './BaseSelect'
 
 class SearchQuery extends BaseSelect {
   likeKeys = []
@@ -58,4 +58,4 @@ class SearchQuery extends BaseSelect {
   }
 }
 
-module.exports = SearchQuery
+export default SearchQuery

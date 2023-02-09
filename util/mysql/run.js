@@ -1,4 +1,4 @@
-const mysql = require('mysql2/promise')
+import { createPool } from 'mysql2/promise'
 
 const isDebugging = true
 
@@ -17,7 +17,7 @@ const run = async (sql, params) => {
     console.log(`Params: ${params}`)
   }
   try {
-    conn = await mysql.createPool(my_config)
+    conn = await createPool(my_config)
     const [rows, fields] = await conn.query(sql, params)
     result = rows
   } catch (err) {
@@ -28,4 +28,4 @@ const run = async (sql, params) => {
   }
 }
 
-module.exports = run
+export default run
