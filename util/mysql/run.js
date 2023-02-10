@@ -17,7 +17,7 @@ const run = async (sql, params) => {
     console.log(`Params: ${params}`)
   }
   try {
-    conn = await createPool(my_config)
+    conn = createPool(my_config)
     const [rows, fields] = await conn.query(sql, params)
     result = rows
   } catch (err) {
