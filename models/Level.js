@@ -1,40 +1,40 @@
-const BaseModel = require('./BaseModel')
+const { BaseModel } = require('@thebittwisters/bitmysql');
 
 const Level = class Level extends BaseModel {
   static get tableName() {
-    return 'levels'
+    return 'levels';
   }
   static get sortBy() {
     return {
-      'score': 'ASC'
-    }
+      score: 'ASC',
+    };
   }
 
-  id    = 0  // int
-  name  = "" // varchar(32)
-  score = 1  // tinyint
+  id = 0; // int
+  name = ''; // varchar(32)
+  score = 1; // tinyint
 
   constructor(param = {}) {
-    super(param)
-    this.id    = param.id    || 0
-    this.name  = param.name  || ""
-    this.score = param.score || ""
+    super(param);
+    this.id = param.id || 0;
+    this.name = param.name || '';
+    this.score = param.score || '';
   }
 
   toPublicData() {
     return {
-      id:    this.id,
-      name:  this.name,
-      score: this.score
-    }
+      id: this.id,
+      name: this.name,
+      score: this.score,
+    };
   }
 
   toJsonData() {
     return {
-      name:  this.name,
-      score: this.score
-    }
+      name: this.name,
+      score: this.score,
+    };
   }
-}
+};
 
-module.exports = Level
+module.exports = Level;
