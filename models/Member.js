@@ -1,4 +1,4 @@
-const { BaseModel } = require('@thebittwisters/bitmysql');
+const { BaseModel, Queries } = require('@thebittwisters/bitmysql');
 
 const Member = class Member extends BaseModel {
   static get tableName() {
@@ -35,7 +35,7 @@ const Member = class Member extends BaseModel {
       try {
         var result = false;
         if (this.id > 0) {
-          var u = new mysql.Update();
+          var u = new Queries.Update();
           await u
             .update(this.constructor.tableName)
             .set({ group_id: this.group_id })
