@@ -95,7 +95,7 @@ const Answer = class Answer extends BaseModel {
       try {
         var result = false;
         if (this.id > 0) {
-          var u = new mysql.Update();
+          var u = new Queries.Update();
           await u
             .update(this.constructor.tableName)
             .set({ score: this.score })

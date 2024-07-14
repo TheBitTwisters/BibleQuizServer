@@ -9,6 +9,12 @@ const Question = class Question extends BaseModel {
       order: 'ASC',
     };
   }
+  static paginateBy(page = 1) {
+    return {
+      limit: 1000,
+      offset: 0,
+    };
+  }
 
   id = 0; // int
   active = true; // tinyint(1)

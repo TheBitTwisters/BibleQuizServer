@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/TheBitTwisters/BibleQuizServer#readme",
   "dependencies": {
-    "@thebittwisters/bitmysql": "^1.3.5",
+    "@thebittwisters/bitmysql": "^1.5.8",
     "bcrypt": "^5.1.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
